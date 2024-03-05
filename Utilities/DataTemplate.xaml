@@ -1,0 +1,81 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:MainClient._ViewModel"
+                    xmlns:view="clr-namespace:MainClient._View">
+
+    <!-- Startup -->
+    <DataTemplate DataType="{x:Type vm:HomeVM}">
+        <view:Home />
+    </DataTemplate>
+
+    <!-- Main -->
+    <DataTemplate DataType="{x:Type vm:MainWindowVM}">
+        <view:MainWindow />
+    </DataTemplate>
+
+    <!-- Clients -->
+    <DataTemplate DataType="{x:Type vm:AddClientVM}">
+        <view:AddClient />
+    </DataTemplate>
+
+    <!-- Client & Accounts -->
+    <DataTemplate DataType="{x:Type vm:ClientOverviewVM}">
+        <view:ClientOverview />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AccountOverviewVM}">
+        <view:AccountOverview />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:BalancesVM}">
+        <view:Balances />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:PositionsVM}">
+        <view:Positions />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:TransactionsVM}">
+        <view:Transactions />
+    </DataTemplate>
+
+    <!-- Notes -->
+    <DataTemplate DataType="{x:Type vm:AddNotesVM}">
+        <view:AddNotes />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:ViewNotesVM}">
+        <view:ViewNotes />
+    </DataTemplate>
+
+    <!-- Cashiering -->
+    <DataTemplate DataType="{x:Type vm:ActivityVM}">
+        <view:Activity />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:HistoryVM}">
+        <view:History />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AccountDepositVM}">
+        <view:AccountDeposit />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:SplitDepositVM}">
+        <view:SplitDeposit />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AchLinkVM}">
+        <view:AchLink />
+    </DataTemplate>
+
+    <!-- Trading -->
+    <DataTemplate DataType="{x:Type vm:OrderEntryVM}">
+        <view:OrderEntry />
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:OrderStatusVM}">
+        <view:OrderStatus />
+    </DataTemplate>
+
+</ResourceDictionary>
