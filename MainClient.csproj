@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <RootNamespace>MainClient</RootNamespace>
+        <Nullable>disable</Nullable>
+        <UseWPF>true</UseWPF>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="Images\mainclient.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Images\mainclient.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+        <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    </ItemGroup>
+</Project>
