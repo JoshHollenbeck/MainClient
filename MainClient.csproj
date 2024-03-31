@@ -8,9 +8,6 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
     </PropertyGroup>
     <ItemGroup>
-        <None Remove="Images\mainclient.png" />
-    </ItemGroup>
-    <ItemGroup>
         <Content Include="Images\mainclient.png">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
