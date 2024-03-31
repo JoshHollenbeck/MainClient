@@ -4,22 +4,16 @@ using MainClient.Utilities;
 using System.Windows.Input;
 using MainClient._View;
 using MainClient.Services;
+using MainClient._Model;
+using System.Collections.ObjectModel;
+using System.Windows.Data;
+using System.Linq;
 
 namespace MainClient._ViewModel
 {
     class MainWindowVM : ViewModelBase 
     {
-        private IDialogService _dialogService;
-        private object _currentView;
-        public object CurrentView
-        {
-            get { return _currentView; }
-            set
-            {
-                _currentView = value;
-                OnPropertyChanged();
-            }
-        }
+        private readonly IDialogService _dialogService;
 
         // Startup
         public ICommand HomeCommand { get; }
@@ -78,28 +72,26 @@ namespace MainClient._ViewModel
 
         // Advanced Search
         public ICommand AdvancedSearchCommand { get; private set; }
-
-        public void ShowAccountOverview(string accountNumber)
-        {
-            CurrentView = new AccountOverviewVM(accountNumber);
-        }
-
-        private string selectedAccountNumber;
         
         private void AdvancedSearch(object obj)
         {
+            if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+            {
+                MessageBox.Show("You do not have the necessary permissions to search.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             var advancedSearchWindow = new AdvancedSearch();
             var advancedSearchVM = advancedSearchWindow.DataContext as AdvancedSearchVM;
             if (advancedSearchVM != null)
             {
-                // Assuming AdvancedSearchVM has a property to set the CloseAction or a similar mechanism
                 advancedSearchVM.CloseAndLoadAccountAction = (accountNumber) =>
                 {
-                    selectedAccountNumber = accountNumber; // Capture the selected account number
+                    AccountService.Instance.SelectedAccountNumber = accountNumber;
                     advancedSearchWindow.Close();
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        AccountOverview(selectedAccountNumber); // Pass the account number to the method
+                        AccountOverview(AccountService.Instance.SelectedAccountNumber);
                     });
                 };
             }
@@ -109,70 +101,253 @@ namespace MainClient._ViewModel
         // Client & Accounts
         public ICommand ClientOverviewCommand { get; }
         public ICommand AccountOverviewCommand { get; }
-        public ICommand BalancesCommand { get; }
         public ICommand PositionsCommand { get; }
         public ICommand TransactionsCommand { get; }
         public ICommand AccessHistoryCommand { get; }
 
-        private void ClientOverview(object obj) => CurrentView = new ClientOverviewVM();
-
-        private void AccountOverview(object obj)
-        {
-            var accountNumber = obj as string;
-            // Check if the accountNumber is null or empty
+        private void ClientOverview(object obj)
+        {   
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
             if (string.IsNullOrEmpty(accountNumber))
             {
-                // Using MessageBox.Show to inform the user
                 MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             else
             {
-                // Proceed with loading AccountOverviewVM with the provided accountNumber
-                CurrentView = new AccountOverviewVM(accountNumber);
+                if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+                {
+                    MessageBox.Show("You do not have the necessary permissions to view clients.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return; // Exit the method if no permissions are granted
+                }
+                
+                LoadViewModel(accountNumber, accNum => new ClientOverviewVM(accNum));
             }
         }
 
-        private void Balances(object obj) => CurrentView = new BalancesVM();
+        private void AccountOverview(object obj)
+        {
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
 
-        private void Positions(object obj) => CurrentView = new PositionsVM();
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+                {
+                    MessageBox.Show("You do not have the necessary permissions to view accounts.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return; // Exit the method if no permissions are granted
+                }
 
-        private void Transactions(object obj) => CurrentView = new TransactionsVM();
+                var clientNameModel = MainWindowModel.GetClientNameByAcctNum(accountNumber);
+                
+                if (clientNameModel != null)
+                {
+                    ClientFullName = clientNameModel.ClientFullName;
+                }
+
+                var clientAccountList = MainWindowModel.GetClientAcctListByAcctNum(accountNumber);
+        
+                if (clientAccountList != null)
+                {
+                    MainWindowModel currentAccount = null;
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        _clientAcctsResults.Clear();
+                        foreach (var accountList in clientAccountList)
+                        {
+                            
+                            _clientAcctsResults.Add(accountList);
+
+                            if (accountList.ClientAcctAndName.StartsWith(accountNumber))
+                            {
+                                currentAccount = accountList;
+                            }
+                        }
+
+                        var collectionView = CollectionViewSource.GetDefaultView(_clientAcctsResults);
+     
+                        if (collectionView != null && currentAccount != null)
+                        {
+                            collectionView.MoveCurrentTo(currentAccount);
+                        }
+                    });
+                }
+                LoadViewModel(accountNumber, accNum => new AccountOverviewVM(accNum));
+            }
+        }
+
+        private void Positions(object obj)
+        {
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+                {
+                    MessageBox.Show("You do not have the necessary permissions to view positions.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                LoadViewModel(accountNumber, accNum => new PositionsVM(accNum));
+            }
+        }
+
+        private void Transactions(object obj)
+        { 
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+                {
+                    MessageBox.Show("You do not have the necessary permissions to view transactions.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return; // Exit the method if no permissions are granted
+                }
+
+                LoadViewModel(accountNumber, accNum => new TransactionsVM(accNum));
+            }
+        }
+
+        private void AccessHistory(object obj) 
+        {
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+                {
+                    MessageBox.Show("You do not have the necessary permissions to view transactions.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return; // Exit the method if no permissions are granted
+                }
+
+                LoadViewModel(accountNumber, accNum => new AccessHistoryVM(accNum));
+            }
+        }
 
         // Notes
         public ICommand ViewNotesCommand { get; }
-        private void ViewNotes(object obj) => CurrentView = new ViewNotesVM();
+        private void ViewNotes(object obj) 
+        {
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+                {
+                    MessageBox.Show("You do not have the necessary permissions to view transactions.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return; // Exit the method if no permissions are granted
+                }
+
+                LoadViewModel(accountNumber, accNum => new ViewNotesVM(accNum));
+            }
+        }
 
         public ICommand AddNotesCommand { get; private set; }
         
         private void AddNotes(object obj)
         {
-            _dialogService.OpenDialog<AddNotes>();
+            if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney)
+            {
+                MessageBox.Show("You do not have the necessary permissions to add notes.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return; // Exit the method if no permissions are granted
+            }
+            
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                // TODO ADD NOTES
+                _dialogService.OpenDialog<MainClient._View.AddNotes>();
+            }
         }
 
         // Cashiering
         public ICommand ActivityCommand { get; }
-        public ICommand HistoryCommand { get; }
         public ICommand AccountDepositCommand { get; }
-        public ICommand SplitDepositCommand { get; }
         public ICommand AchLinkCommand { get; }
 
         private void Activity(object obj) => CurrentView = new ActivityVM();
 
-        private void History(object obj) => CurrentView = new HistoryVM();
+        private void AccountDeposit(object obj)
+        {
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                if (!RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+                {
+                    MessageBox.Show("You do not have the necessary permissions to deposit into account.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return; // Exit the method if no permissions are granted
+                }
 
-        private void AccountDeposit(object obj) => CurrentView = new AccountDepositVM();
+                LoadViewModel(accountNumber, accNum => new AccountDepositVM(accNum));
+            }
+        }
 
-        private void SplitDeposit(object obj) => CurrentView = new SplitDepositVM();
+        private void AchLink(object obj)
+        {
+            var accountNumber = AccountService.Instance.SelectedAccountNumber;
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                if (!RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
+                {
+                    MessageBox.Show("You do not have the necessary permissions to view transactions.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return; // Exit the method if no permissions are granted
+                }
 
-        private void AchLink(object obj) => CurrentView = new AchLinkVM();
+                LoadViewModel(accountNumber, accNum => new AchLinkVM(accNum));
+            }
+        }
 
         // Trading
         public ICommand OrderEntryCommand { get; }
         public ICommand OrderStatusCommand { get; }
 
-        private void OrderEntry(object obj) => CurrentView = new OrderEntryVM();
+        private void OrderEntry(object obj)
+        {
+            if (!RepIdService.Instance.Trading)
+            {
+                MessageBox.Show("You do not have permission to enter orders.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-        private void OrderStatus(object obj) => CurrentView = new OrderStatusVM();
+            CurrentView = new OrderEntryVM();
+        }
+
+        private void OrderStatus(object obj)
+        {
+            if (!RepIdService.Instance.Trading)
+            {
+                MessageBox.Show("You do not have permission to enter orders.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            CurrentView = new OrderStatusVM();
+        }
 
         // Settings
         public ICommand SettingsCommand { get; }
@@ -190,14 +365,14 @@ namespace MainClient._ViewModel
                 if (_newWord != value)
                 {
                     _newWord = value;
-                    OnPropertyChanged(); // Assumes CallerMemberName is being used
+                    OnPropertyChanged(nameof(NewWord));
                 }
             }
         }
 
-        public ICommand GetRandomWordCommand { get; private set; }
+        public ICommand GetRandomWordCommand { get; }
 
-        private void ExecuteGetRandomWord()
+        private void FetchRandomWord()
         {
             var randomWordModel = MainClient._Model.MainWindowModel.GetRandomWord();
             if (randomWordModel != null)
@@ -206,9 +381,103 @@ namespace MainClient._ViewModel
             }
         }
 
+        // Get Client Name
+
+        private string _clientFullName;
+        public string ClientFullName
+        {
+            get => _clientFullName;
+            set
+            {
+                _clientFullName = value;
+                OnPropertyChanged(nameof(ClientFullName));
+            }
+        }
+
+        // Get Client Accts List
+        private ObservableCollection<MainWindowModel> _clientAcctsResults = new ObservableCollection<MainWindowModel>();
+        public ObservableCollection<MainWindowModel> ClientAcctsResults
+        {
+            get  => _clientAcctsResults;
+            set
+            {
+                if (_clientAcctsResults != value)
+                {
+                    _clientAcctsResults = value;
+                    OnPropertyChanged(nameof(ClientAcctsResults));;
+                }
+            }
+        }
+
+        private MainWindowModel _selectedClientAccount;
+        public MainWindowModel SelectedClientAccount
+        {
+            get => _selectedClientAccount;
+            set
+            {
+                if (_selectedClientAccount != value)
+                {
+                    _selectedClientAccount = value;
+                    OnPropertyChanged(nameof(SelectedClientAccount));
+                }
+            }
+        }
+
+        // TODO Account isn't showing up in Combobox
+        public void HandleSelectionChange(MainWindowModel selectedAccount)
+        {
+            SelectedClientAccount = selectedAccount; // This property is now being used and should update the ComboBox via the binding.
+            var parts = selectedAccount.ClientAcctAndName.Split(new string[] { " - " }, StringSplitOptions.None);
+            var accountNumber = parts.Length > 0 ? parts[0] : string.Empty;
+            
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(accountNumber))
+            {
+                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var clientNameModel = MainWindowModel.GetClientNameByAcctNum(accountNumber);
+
+            if (clientNameModel != null)
+            {
+                ClientFullName = clientNameModel.ClientFullName;
+            }
+
+            var clientAccountList = MainWindowModel.GetClientAcctListByAcctNum(accountNumber);
+            
+            SelectedClientAccount = clientAccountList.FirstOrDefault(account => account.ClientAcctAndName.StartsWith(accountNumber));
+
+            if (clientAccountList != null)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _clientAcctsResults.Clear();
+                    foreach (var accountList in clientAccountList)
+                    {
+                        _clientAcctsResults.Add(accountList);
+                    }
+
+                    var collectionView = CollectionViewSource.GetDefaultView(_clientAcctsResults);
+     
+                    if (collectionView != null && _clientAcctsResults != null)
+                    {
+                        collectionView.MoveCurrentTo(selectedAccount);
+                    }
+                });
+            }
+            LoadViewModel(accountNumber, accNum => new AccountOverviewVM(accNum));
+        }
+        
         // IDialog Service
         public MainWindowVM(IDialogService dialogService)
         {
+
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
             
             // Startup Page
@@ -229,17 +498,15 @@ namespace MainClient._ViewModel
             // Client & Accounts
             ClientOverviewCommand = new RelayCommand(ClientOverview);
             AccountOverviewCommand = new RelayCommand(AccountOverview);
-            BalancesCommand = new RelayCommand(Balances);
             PositionsCommand = new RelayCommand(Positions);
             TransactionsCommand = new RelayCommand(Transactions);
+            AccessHistoryCommand = new RelayCommand(AccessHistory);
             // Notes
             ViewNotesCommand = new RelayCommand(ViewNotes);
             AddNotesCommand = new RelayCommand(AddNotes);
             // Cashiering
             ActivityCommand = new RelayCommand(Activity);
-            HistoryCommand = new RelayCommand(History);
             AccountDepositCommand = new RelayCommand(AccountDeposit);
-            SplitDepositCommand = new RelayCommand(SplitDeposit);
             AchLinkCommand = new RelayCommand(AchLink);
             // Trading
             OrderEntryCommand = new RelayCommand(OrderEntry);
@@ -247,12 +514,12 @@ namespace MainClient._ViewModel
             // Settings
             SettingsCommand = new RelayCommand(Setting);
             // Random Word
-            GetRandomWordCommand = new RelayCommand(o => ExecuteGetRandomWord());
-            ExecuteGetRandomWord();
+            GetRandomWordCommand = new RelayCommand(o => FetchRandomWord());
+            FetchRandomWord();
         }
 
         public MainWindowVM()
-        {            
+        {
         }
     }
 }

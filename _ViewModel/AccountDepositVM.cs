@@ -4,9 +4,9 @@ namespace MainClient._ViewModel
 {
     class AccountDepositVM : ViewModelBase
     {
-        public AccountDepositVM()
+        public AccountDepositVM(string accountNumber)
         {
-            // TODO Add functionality
+            string acctNum = accountNumber;
         }
     }
 }

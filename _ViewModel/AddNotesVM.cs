@@ -1,49 +1,67 @@
+using MainClient.Services;
 using MainClient.Utilities;
+using MainClient._Model;
+using System.Windows;
 using System.Windows.Input;
-using System.ComponentModel;  
+using System;
 
 namespace MainClient._ViewModel
 {
-    class AddNotesVM : INotifyPropertyChanged
+    class AddNotesVM : ViewModelBase
     {
-        private string _noteContent;
-        public string NoteContent
+        private const int MaxCharacters = 255;
+        public Action CloseNote { get; set; }
+        private string _noteText;
+        public string NoteText
         {
-            get { return _noteContent; }
-            set 
-            { 
-                _noteContent = value;
-                OnPropertyChanged("NoteContent");
-                CharactersRemaining = (1500 - _noteContent.Length).ToString() + " characters remaining";
+            get => _noteText;
+            set
+            {
+                if (_noteText != value)
+                {
+                    _noteText = value;
+                    OnPropertyChanged(nameof(NoteText));
+                    OnPropertyChanged(nameof(CharactersRemaining));
+                }
             }
         }
+        
+        public string CharactersRemaining
+        {
+            get { return $"{NoteText?.Length ?? 0} / {MaxCharacters}"; }
+        }
 
-        public string CharactersRemaining { get; set; }
-
-        public ICommand SaveCommand { get; set; }
-        public ICommand CancelCommand { get; set; }
+        public ICommand AddNoteCommand { get; private set; }
+        public ICommand CancelCommand { get; private set; }
 
         public AddNotesVM()
         {
-            SaveCommand = new RelayCommand(SaveNote);
-            CancelCommand = new RelayCommand(CancelNote);
+            AddNoteCommand = new RelayCommand(ExecuteAddNote);
+            CancelCommand = new RelayCommand(ExecuteCancel);
         }
 
-        private void SaveNote(object parameter)
+        private void ExecuteAddNote(object parameter)
         {
-            // Logic to save the note
+            string accountNumber = AccountService.Instance.SelectedAccountNumber;
+            string repId = RepIdService.Instance.RepId;
+
+            try
+            {
+                AddNotesModel.InsertAcctNotesByAcctNum(accountNumber, NoteText, repId);
+                // Logic after successful note addition
+                NoteText = string.Empty;
+                CloseNote?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to add note: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void CancelNote(object parameter)
+        private void ExecuteCancel(object parameter)
         {
-            // Logic to cancel note addition
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            NoteText = string.Empty;
+            CloseNote?.Invoke();
         }
     }
 }

@@ -51,14 +51,17 @@ namespace MainClient._ViewModel
         private void ExecuteLogin(object parameter)
         {
             loginWindow = new LoginWindowModel();
-            bool result = loginWindow.Login(Username, Password);
+            var loginResult = loginWindow.Login(Username, Password);
 
-            if (!result)
+            if (!loginResult.Result)
             {
                 _dialogService.ShowMessage("Username or password is incorrect", "Login Failed");
             }
             else
             {
+                // Now that Login returns a tuple, we can directly use the permissions
+                RepIdService.Instance.SetPermissions(loginResult.RepId, loginResult.Trading, loginResult.MoveMoney, loginResult.ViewOnly);
+
                 // Initialize the MainWindow with the DialogService
                 MainWindowVM mainWindowVM = new MainWindowVM(_dialogService);
 
@@ -91,22 +94,34 @@ namespace MainClient._ViewModel
         **/
         private void ExecuteBypass(object parameter)
         {
+            loginWindow = new LoginWindowModel();
+            var loginResult = loginWindow.LoginBypass();
 
-            // Initialize the MainWindow with the DialogService
-            MainWindowVM mainWindowVM = new MainWindowVM(_dialogService);
-
-            // Create MainWindow and set its DataContext
-            MainWindow mainWindow = new MainWindow
+            if (!loginResult.Result)
             {
-                DataContext = mainWindowVM
-            };
-
-            mainWindow.Show();
-
-            // Close the current login window
-            foreach (Window window in Application.Current.Windows)
+                _dialogService.ShowMessage("Username or password is incorrect", "Login Failed");
+            }
+            else
             {
-                if (window.DataContext == this) window.Close();
+                // Now that Login returns a tuple, we can directly use the permissions
+                RepIdService.Instance.SetPermissions(loginResult.RepId, loginResult.Trading, loginResult.MoveMoney, loginResult.ViewOnly);
+
+                // Initialize the MainWindow with the DialogService
+                MainWindowVM mainWindowVM = new MainWindowVM(_dialogService);
+
+                // Create MainWindow and set its DataContext
+                MainWindow mainWindow = new MainWindow
+                {
+                    DataContext = mainWindowVM
+                };
+
+                mainWindow.Show();
+
+                // Close the current login window
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window.DataContext == this) window.Close();
+                }
             }
         }
 

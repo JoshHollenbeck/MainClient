@@ -2,20 +2,21 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using MainClient._Model;
+using MainClient.Services;
 using MainClient.Utilities;
-
 using System;
+using Microsoft.Data.SqlClient;
+
 
 namespace MainClient._ViewModel
 {
     class AdvancedSearchVM : ViewModelBase
     {
         private readonly AdvancedSearchModel _searchService;
-
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string MiddleInitial { get; set; }
-        public string CustSecondaryId { get; set; }
+        public string CustomerID { get; set; }
         public string CustPhone { get; set; }
         public string CustTaxId { get; set; }
         public string CustZip { get; set; }
@@ -39,20 +40,21 @@ namespace MainClient._ViewModel
             _searchService = new AdvancedSearchModel();
             SearchResults = new ObservableCollection<AdvancedSearchModel.SearchResult>();
             PerformSearchCommand = new RelayCommand(ExecuteSearch);
-            OpenAccountOverviewCommand = new RelayCommand(OpenAccountOverview);
+            OpenAccountOverviewCommand = new RelayCommand(OpenAccountOverview);            
         }
 
         public ICommand PerformSearchCommand { get; private set; }
 
         public Action FocusOnDataGridAction { get; set; }
-
+        
+        // TODO Check if all search boxes work  qw
         private void ExecuteSearch(object parameter)
         {
             PerformSearch(
                 lastName: this.LastName,
                 firstName: this.FirstName,
                 middleInitial: this.MiddleInitial,
-                custSecondaryId: this.CustSecondaryId,
+                CustomerID: this.CustomerID,
                 custPhone: this.CustPhone,
                 custZip: this.CustZip,
                 custTaxId: this.CustTaxId,
@@ -66,7 +68,7 @@ namespace MainClient._ViewModel
             string lastName,
             string firstName,
             string middleInitial,
-            string custSecondaryId,
+            string CustomerID,
             string custPhone,
             string custZip,
             string custTaxId,
@@ -78,7 +80,7 @@ namespace MainClient._ViewModel
                 lastName,
                 firstName,
                 middleInitial,
-                custSecondaryId,
+                CustomerID,
                 custPhone,
                 custZip,
                 custTaxId,
@@ -117,7 +119,13 @@ namespace MainClient._ViewModel
         {
             if (SelectedItem != null)
             {
+                // Set the global account number when an account is selected
+                AccountService.Instance.SelectedAccountNumber = SelectedItem.AccountNumber; 
+                string repId = RepIdService.Instance.RepId;               
                 CloseAndLoadAccountAction?.Invoke(SelectedItem.AccountNumber);
+
+                AdvancedSearchModel.InsertAcctAccessHistoryByAcctNum(SelectedItem.AccountNumber, repId);
+                
             }
             else
             {
