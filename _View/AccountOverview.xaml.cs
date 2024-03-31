@@ -12,10 +12,5 @@ namespace MainClient._View
         {
             InitializeComponent();
         }
-
-        public void InitializeAccountOverviewVM(string accountNumber)
-        {
-            DataContext = new AccountOverviewVM(accountNumber);
-        }
     }
 }

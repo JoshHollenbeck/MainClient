@@ -9,33 +9,25 @@
              d:DesignWidth="622"
              Style="{StaticResource Page_Style}">
 
-    <UserControl.DataContext>
-        <vm:ActivityVM />
-    </UserControl.DataContext>
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                  VerticalScrollBarVisibility="Auto">
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Border BorderThickness="2"
-                    BorderBrush="#cccccc"
-                    Padding="5 5 5 0">
-                <TextBlock Style="{StaticResource ContainerHeader}"
-                           TextAlignment="Center"
-                           Text="Account Activity" />
-            </Border>
-            <Border Grid.Row="1"
-                    BorderThickness="2 0 2 2"
-                    BorderBrush="#cccccc"
-                    Padding="5">
-                <DataGrid Name="activityResults"
-                          ItemsSource="{Binding AcctActivity}"
-                          AutoGenerateColumns="True"
-                          IsReadOnly="True" />
-            </Border>
-        </Grid>
-    </ScrollViewer>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border BorderThickness="2"
+                BorderBrush="#cccccc"
+                Padding="5 5 5 0">
+            <TextBlock Style="{StaticResource ContainerHeader}"
+                        TextAlignment="Center"
+                        Text="Account Activity" />
+        </Border>
+        <Border Grid.Row="1"
+                BorderThickness="2 0 2 2"
+                BorderBrush="#cccccc"
+                Padding="5">
+            <DataGrid Name="activityResults"
+                        ItemsSource="{Binding AcctActivity}"
+                        Style="{StaticResource DataGrid}" />
+        </Border>
+    </Grid>
 </UserControl>

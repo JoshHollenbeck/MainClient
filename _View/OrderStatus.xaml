@@ -9,46 +9,40 @@
              d:DesignWidth="622"
              Style="{StaticResource Page_Style}">
 
-    <UserControl.DataContext>
-        <vm:OrderStatusVM />
-    </UserControl.DataContext>
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <!-- Grid Column 0-->
-            <Border Grid.Row="0" BorderThickness="2" BorderBrush="#cccccc" Padding="5">
-                <Grid>                    
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock >CLIENT ACCESS HISTORY</TextBlock>
-                    </StackPanel>
-                </Grid>
-            </Border>
+        <!-- Grid Column 0-->
+        <Border Grid.Row="0" BorderThickness="2" BorderBrush="#cccccc" Padding="5">
+            <Grid>                    
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock >CLIENT ACCESS HISTORY</TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-            <Border Grid.Row="1" BorderThickness="2 0 2 2" BorderBrush="#cccccc" Padding="5">
-                <Grid>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock>Date &amp; Time</TextBlock>
-                        <TextBlock>Name</TextBlock>
-                        <TextBlock>Rep ID</TextBlock>
-                    </StackPanel>
-                </Grid>
-            </Border>
+        <Border Grid.Row="1" BorderThickness="2 0 2 2" BorderBrush="#cccccc" Padding="5">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Date &amp; Time</TextBlock>
+                    <TextBlock>Name</TextBlock>
+                    <TextBlock>Rep ID</TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-            <Border Grid.Row="2" BorderThickness="2 0 2 2" BorderBrush="#cccccc" Padding="5">
-                <Grid>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock>xx/xx/xxxx 00:00:00 am/pm</TextBlock>
-                        <TextBlock>Rep Name</TextBlock>
-                        <TextBlock>Rep Id</TextBlock>
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </Grid>
-    </ScrollViewer>
+        <Border Grid.Row="2" BorderThickness="2 0 2 2" BorderBrush="#cccccc" Padding="5">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>xx/xx/xxxx 00:00:00 am/pm</TextBlock>
+                    <TextBlock>Rep Name</TextBlock>
+                    <TextBlock>Rep Id</TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

@@ -15,34 +15,30 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="SingleBorderWindow">
     <Window.DataContext>
-        <vm:LoginWindowVM/>
+        <vm:LoginWindowVM />
     </Window.DataContext>
     <Grid HorizontalAlignment="Center"
           VerticalAlignment="Center">
         <Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-			<RowDefinition Height="35" />
-			<RowDefinition Height="35" />
-			<RowDefinition Height="35" />
             <RowDefinition Height="35" />
-		</Grid.RowDefinitions>
-
-        <Label Content="Username:"/>
-
+            <RowDefinition Height="35" />
+            <RowDefinition Height="35" />
+            <RowDefinition Height="35" />
+        </Grid.RowDefinitions>
+        <Label Content="Username:" />
         <TextBox x:Name="UserNameTextBox"
                  Grid.Column="1"
                  Height="23"
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
                  Width="120"
-                 Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
-        
+                 Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
         <Label Grid.Row="1"
-               Content="Password:"/>
-
+               Content="Password:" />
         <PasswordBox Grid.Row="1"
                      Grid.Column="1"
                      Height="23"
@@ -55,21 +51,23 @@
                             Command="{Binding LoginCommand}" />
             </PasswordBox.InputBindings>
         </PasswordBox>
-        
         <Button Grid.Row="2"
                 Grid.ColumnSpan="2"
                 Content="Login"
+                Style="{StaticResource Button}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Width="75"
-                Command="{Binding LoginCommand}"/>
-
+                Margin="0 5 0 0"
+                Command="{Binding LoginCommand}" />
         <Button Grid.Row="3"
                 Grid.ColumnSpan="2"
                 Content="Employee Bypass"
+                Style="{StaticResource Button}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                Margin="0 5 0 0"
                 Width="100"
-                Command="{Binding EmployeeCommand}"/>
+                Command="{Binding EmployeeCommand}" />
     </Grid>
 </Window>

@@ -17,6 +17,7 @@ namespace MainClient._View
 
             var viewModel = new AdvancedSearchVM();
             viewModel.CloseAndLoadAccountAction = (accountNumber) => this.Close();
+            
             this.DataContext = viewModel;
 
             if (DataContext is AdvancedSearchVM vm)

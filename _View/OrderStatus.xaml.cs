@@ -11,7 +11,6 @@ namespace MainClient._View
         public OrderStatus()
         {
             InitializeComponent();
-            DataContext = new OrderStatusVM();
         }
     }
 }

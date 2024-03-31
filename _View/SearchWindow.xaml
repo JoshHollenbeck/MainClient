@@ -7,38 +7,35 @@
              d:DesignHeight="450"
              d:DesignWidth="450"
              Style="{StaticResource Page_Style}">
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <!-- Grid Column 0-->
-            <Border Grid.Row="0" BorderThickness="2" BorderBrush="#cccccc" Padding="5">
-                <Grid>                    
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock >SEARCH RESULTS</TextBlock>
-                    </StackPanel>
-                </Grid>
-            </Border>
+        <!-- Grid Column 0-->
+        <Border Grid.Row="0" BorderThickness="2" BorderBrush="#cccccc" Padding="5">
+            <Grid>                    
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock >SEARCH RESULTS</TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
 
-            <Border Grid.Row="1" BorderThickness="2 0 2 2" BorderBrush="#cccccc" Padding="5">
-                <Grid>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock>Name</TextBlock>
-                        <TextBlock>Customer ID</TextBlock>
-                        <TextBlock>Tax ID</TextBlock>
-                        <TextBlock>Address</TextBlock>
-                        <TextBlock>Accounts</TextBlock>
-                        <TextBlock>Date of Birth</TextBlock>
-                        <TextBlock>Phone</TextBlock>
-                        <TextBlock>Email Address</TextBlock>
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </Grid>
-    </ScrollViewer>
+        <Border Grid.Row="1" BorderThickness="2 0 2 2" BorderBrush="#cccccc" Padding="5">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>Name</TextBlock>
+                    <TextBlock>Customer ID</TextBlock>
+                    <TextBlock>Tax ID</TextBlock>
+                    <TextBlock>Address</TextBlock>
+                    <TextBlock>Accounts</TextBlock>
+                    <TextBlock>Date of Birth</TextBlock>
+                    <TextBlock>Phone</TextBlock>
+                    <TextBlock>Email Address</TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>

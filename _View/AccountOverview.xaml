@@ -17,7 +17,6 @@
                                              FalseValue="Normal"
                                              TrueValue="Bold" />
         <utilities:FullNameConverter x:Key="FullNameConverter" />
-        <utilities:FundingToVisibilityConverter x:Key="FundingToVisibilityConverter" />
     </UserControl.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -84,7 +83,7 @@
                 <StackPanel Grid.Row="1">
                     <TextBlock Text="{Binding PrimaryContactName}" />
                     <TextBlock Text="{Binding PrimaryContactAddress}" />
-                    <TextBlock Style="{StaticResource EmptyTextBlockCollapseStyle}"
+                    <TextBlock Style="{StaticResource EmptyTextBlockCollapse}"
                                Text="{Binding PrimaryContactAddress2}" />
                     <TextBlock>
                         <TextBlock.Text>
@@ -120,6 +119,7 @@
                         Width="25"
                         Content="Edit" />
                 <StackPanel Grid.Row="1">
+                <!-- TODO If NULL hide -->
                     <TextBlock Style="{StaticResource ContainerTitle}"
                                Text="Added By" />
                     <TextBlock Text="{Binding RepID}" />
@@ -200,7 +200,7 @@
                     </TextBlock>
                     <TextBlock Text="{Binding RegistrationName}" />
                     <TextBlock Text="{Binding ClientAddress}" />
-                    <TextBlock Style="{StaticResource EmptyTextBlockCollapseStyle}"
+                    <TextBlock Style="{StaticResource EmptyTextBlockCollapse}"
                                Text="{Binding ClientAddress2}" />
                     <TextBlock>
                         <TextBlock.Text>
@@ -379,20 +379,10 @@
                         Width="25"
                         Content="Edit" />
                 <DataGrid Grid.Row="2"
+                          Grid.ColumnSpan="2"
                           Name="accountHolderResults"
-                          ItemsSource="{Binding SearchResults}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          SelectionMode="Single"
-                          SelectionUnit="FullRow"
-                          CanUserAddRows="False"
-                          CanUserDeleteRows="False"
-                          CanUserReorderColumns="False"
-                          CanUserResizeColumns="False"
-                          CanUserResizeRows="False"
-                          CanUserSortColumns="False"
-                          MaxHeight="25"
-                          RowHeaderWidth="0">
+                          ItemsSource="{Binding AccountHolderResults}"
+                          Style="{StaticResource DataGrid}">
                     <DataGrid.Resources>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment"
@@ -401,19 +391,34 @@
                     </DataGrid.Resources>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="First &amp; Last Name"
-                                            Binding="{Binding POAFirstLastName}" />
-                        <DataGridTextColumn Header="Role"
-                                            Binding="{Binding POARole}" />
+                                            Binding="{Binding AccountHolderFirstLastName}"
+                                            Width="*"
+                                            MinWidth="162" />
                         <DataGridTextColumn Header="Customer ID"
-                                            Binding="{Binding POACustomerID}" />
+                                            Binding="{Binding AccountHolderCustomerID}"
+                                            Width="85" />
+                        <DataGridTextColumn Header="Address"
+                                            Binding="{Binding AccountHolderAddress}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="City"
+                                            Binding="{Binding AccountHolderCity}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="ST"
+                                            Binding="{Binding AccountHolderState}"
+                                            Width="25" />
+                        <DataGridTextColumn Header="Zip"
+                                            Binding="{Binding AccountHolderZip}"
+                                            Width="50" />
                         <DataGridTextColumn Header="Tax ID"
-                                            Binding="{Binding POATaxID}" />
+                                            Binding="{Binding AccountHolderTaxID}"
+                                            Width="75" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
         </Border>
         <!-- Beneficiaries Grid Box -->
         <Border Grid.Row="3"
+                Grid.ColumnSpan="1"
                 BorderThickness="2, 0, 2, 2"
                 BorderBrush="#cccccc"
                 Padding="5">
@@ -434,20 +439,10 @@
                         Width="25"
                         Content="Edit" />
                 <DataGrid Grid.Row="2"
-                          Name="beneficiaryResults"
-                          ItemsSource="{Binding SearchResults}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          SelectionMode="Single"
-                          SelectionUnit="FullRow"
-                          CanUserAddRows="False"
-                          CanUserDeleteRows="False"
-                          CanUserReorderColumns="False"
-                          CanUserResizeColumns="False"
-                          CanUserResizeRows="False"
-                          CanUserSortColumns="False"
-                          MaxHeight="25"
-                          RowHeaderWidth="0">
+                          Grid.ColumnSpan="2"
+                          Name="accountBeneResults"
+                          ItemsSource="{Binding AccountBeneResults}"
+                          Style="{StaticResource DataGrid}">
                     <DataGrid.Resources>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment"
@@ -456,13 +451,21 @@
                     </DataGrid.Resources>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="First &amp; Last Name"
-                                            Binding="{Binding POAFirstLastName}" />
-                        <DataGridTextColumn Header="Role"
-                                            Binding="{Binding POARole}" />
+                                            Binding="{Binding BeneFirstLastName}"
+                                            Width="*"
+                                            MinWidth="162" />
                         <DataGridTextColumn Header="Customer ID"
-                                            Binding="{Binding POACustomerID}" />
+                                            Binding="{Binding BeneCustomerID}"
+                                            Width="85" />
+                        <DataGridTextColumn Header="% Portion"
+                                            Binding="{Binding BenePortion}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="Relationship"
+                                            Binding="{Binding BeneRelationship}"
+                                            Width="Auto" />
                         <DataGridTextColumn Header="Tax ID"
-                                            Binding="{Binding POATaxID}" />
+                                            Binding="{Binding BeneTaxID}"
+                                            Width="75" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
@@ -489,8 +492,9 @@
                         Width="25"
                         Content="Edit" />
                 <DataGrid Grid.Row="2"
-                          Name="powerOfAttorneyResults"
-                          ItemsSource="{Binding SearchResults}"
+                          Grid.ColumnSpan="2"
+                          Name="accountPOAyResults"
+                          ItemsSource="{Binding AccountPOAResults}"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           SelectionMode="Single"
@@ -501,8 +505,8 @@
                           CanUserResizeColumns="False"
                           CanUserResizeRows="False"
                           CanUserSortColumns="False"
-                          MaxHeight="25"
-                          RowHeaderWidth="0">
+                          RowHeaderWidth="0"
+                          HorizontalAlignment="Stretch">
                     <DataGrid.Resources>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment"
@@ -510,14 +514,19 @@
                         </Style>
                     </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="First &amp; Last Name"
-                                            Binding="{Binding POAFirstLastName}" />
                         <DataGridTextColumn Header="Role"
-                                            Binding="{Binding POARole}" />
+                                            Binding="{Binding POARole}"
+                                            Width="160" />
+                        <DataGridTextColumn Header="First &amp; Last Name"
+                                            Binding="{Binding POAFirstLastName}"
+                                            Width="*"
+                                            MinWidth="162" />
                         <DataGridTextColumn Header="Customer ID"
-                                            Binding="{Binding POACustomerID}" />
+                                            Binding="{Binding POACustomerID}"
+                                            Width="85" />
                         <DataGridTextColumn Header="Tax ID"
-                                            Binding="{Binding POATaxID}" />
+                                            Binding="{Binding POATaxID}"
+                                            Width="75" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
@@ -574,13 +583,13 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <TextBlock Text="✔"
-                                       Visibility="{Binding AcctFunding, Converter={StaticResource FundingToVisibilityConverter}, ConverterParameter='1'}" />
+                                       Visibility="{Binding AcctFundingVisibility1}" />
                             <TextBlock Text="✔"
-                                       Visibility="{Binding AcctFunding, Converter={StaticResource FundingToVisibilityConverter}, ConverterParameter='2'}" />
+                                       Visibility="{Binding AcctFundingVisibility2}" />
                             <TextBlock Text="✔"
-                                       Visibility="{Binding AcctFunding, Converter={StaticResource FundingToVisibilityConverter}, ConverterParameter='3'}" />
+                                       Visibility="{Binding AcctFundingVisibility3}" />
                             <TextBlock Text="✔"
-                                       Visibility="{Binding AcctFunding, Converter={StaticResource FundingToVisibilityConverter}, ConverterParameter='4'}" />
+                                       Visibility="{Binding AcctFundingVisibility4}" />
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="Salary / Wages / Savings" />
@@ -600,11 +609,11 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel>
                             <TextBlock Text="✔"
-                                       Visibility="{Binding AcctFunding, Converter={StaticResource FundingToVisibilityConverter}, ConverterParameter='5'}" />
+                                       Visibility="{Binding AcctFundingVisibility5}" />
                             <TextBlock Text="✔"
-                                       Visibility="{Binding AcctFunding, Converter={StaticResource FundingToVisibilityConverter}, ConverterParameter='6'}" />
+                                       Visibility="{Binding AcctFundingVisibility6}" />
                             <TextBlock Text="✔"
-                                       Visibility="{Binding AcctFunding, Converter={StaticResource FundingToVisibilityConverter}, ConverterParameter='7'}" />
+                                       Visibility="{Binding AcctFundingVisibility7}" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Investment Capital Gains" />
@@ -626,14 +635,14 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Foreground="{Binding AcctPurpose}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctPurpose}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctPurpose}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctPurpose}"
-                                       Text="✔" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctPurposeVisibility1}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctPurposeVisibility2}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctPurposeVisibility3}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctPurposeVisibility4}" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="General Investing" />
@@ -652,12 +661,12 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Foreground="{Binding AcctPurpose}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctPurpose}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctPurpose}"
-                                       Text="✔" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctPurposeVisibility5}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctPurposeVisibility6}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctPurposeVisibility7}" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Investment of Pooled Assets" />
@@ -678,12 +687,12 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Foreground="{Binding AcctObjective}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctObjective}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctObjective}"
-                                       Text="✔" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctObjectiveVisibility1}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctObjectiveVisibility2}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctObjectiveVisibility3}" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Capital Preservation" />
@@ -701,10 +710,10 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Foreground="{Binding AcctObjective}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctObjective}"
-                                       Text="✔" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctObjectiveVisibility4}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctObjectiveVisibility5}" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Speculation" />
@@ -724,10 +733,10 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Foreground="{Binding AcctActivity}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctActivity}"
-                                       Text="✔" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctActivityVisibility1}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctActivityVisibility2}" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Less than 5" />
@@ -744,10 +753,10 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Foreground="{Binding AcctActivity}"
-                                       Text="✔" />
-                            <TextBlock Foreground="{Binding AcctActivity}"
-                                       Text="✔" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctActivityVisibility3}" />
+                            <TextBlock Text="✔"
+                                       Visibility="{Binding AcctActivityVisibility4}" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="5 - 10" />

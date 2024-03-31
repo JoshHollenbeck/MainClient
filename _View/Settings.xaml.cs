@@ -11,7 +11,6 @@ namespace MainClient._View
         public Settings()
         {
             InitializeComponent();
-            DataContext = new SettingsVM();
         }
     }
 }

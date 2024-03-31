@@ -4,38 +4,107 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:MainClient._ViewModel"
+             xmlns:utilities="clr-namespace:MainClient.Utilities"
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="622"
              Style="{StaticResource Page_Style}">
-
-    <UserControl.DataContext>
-        <vm:PositionsVM />
-    </UserControl.DataContext>
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                  VerticalScrollBarVisibility="Auto">
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Border BorderThickness="2"
-                    BorderBrush="#cccccc"
-                    Padding="5 5 5 0">
+    <UserControl.Resources>
+        <utilities:CurrencyFormatConverter x:Key="CurrencyFormatConverter" />
+    </UserControl.Resources>
+    <Grid Margin="5">
+        <Border Grid.Row="0"
+                BorderThickness="2"
+                BorderBrush="#cccccc"
+                Padding="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource ContainerHeader}"
-                           TextAlignment="Center"
-                           Text="Account Positions" />
-            </Border>
-            <Border Grid.Row="1"
-                    BorderThickness="2 0 2 2"
-                    BorderBrush="#cccccc"
-                    Padding="5">
-                <DataGrid Name="positionResults"
-                          ItemsSource="{Binding AcctPosition}"
-                          AutoGenerateColumns="True"
-                          IsReadOnly="True" />
-            </Border>
-        </Grid>
-    </ScrollViewer>
+                            TextAlignment="Center"
+                            Text="Account Balances" />
+                <DataGrid Grid.Row="1"
+                            Name="acctPositionResults"
+                            ItemsSource="{Binding AcctPositionResults}"
+                            Style="{StaticResource DataGrid}">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Center" />
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Symbol"
+                                            Binding="{Binding PositionsStockTicker}"
+                                            Width="85" />
+                        <DataGridTextColumn Header="Quantity"
+                                            Binding="{Binding PositionsQuantity}"
+                                            Width="85" />
+                        <DataGridTemplateColumn Header="Dollar Cost Average"
+                                                Width="65">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding PositionsAverageCost, Converter={StaticResource CurrencyFormatConverter}}"
+                                                    VerticalAlignment="Center"
+                                                    Grid.Column="0" />
+                                        <TextBlock Text="{Binding PositionsAverageCost, StringFormat=N2}"
+                                                    TextAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Current Stock Price"
+                                                Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding PositionsCurrentPrice, Converter={StaticResource CurrencyFormatConverter}}"
+                                                    VerticalAlignment="Center"
+                                                    Grid.Column="0" />
+                                        <TextBlock Text="{Binding PositionsCurrentPrice, StringFormat=N2}"
+                                                    TextAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Current Total Value"
+                                                Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding PositionsCurrentValue, Converter={StaticResource CurrencyFormatConverter}}"
+                                                    VerticalAlignment="Center"
+                                                    Grid.Column="0" />
+                                        <TextBlock Text="{Binding PositionsCurrentValue, StringFormat=N2}"
+                                                    TextAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

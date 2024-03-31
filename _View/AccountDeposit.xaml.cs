@@ -11,7 +11,6 @@ namespace MainClient._View
         public AccountDeposit()
         {
             InitializeComponent();
-            DataContext = new AccountDepositVM();
         }
     }
 }

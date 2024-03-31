@@ -4,11 +4,11 @@ using MainClient._ViewModel;
 namespace MainClient._View
 {
     /// <summary>
-    /// Interaction logic for Transactions.xaml
+    /// Interaction logic for AccessHistory.xaml
     /// </summary>
-    public partial class ViewNotes : UserControl
+    public partial class AccessHistory : UserControl
     {
-        public ViewNotes()
+        public AccessHistory()
         {
             InitializeComponent();
         }

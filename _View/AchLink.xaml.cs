@@ -11,7 +11,6 @@ namespace MainClient._View
         public AchLink()
         {
             InitializeComponent();
-            DataContext = new AchLinkVM();
         }
     }
 }

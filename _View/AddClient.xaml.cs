@@ -12,7 +12,6 @@ namespace MainClient._View
         public AddClient()
         {
             InitializeComponent();
-            DataContext = new AddClientVM();
         }
 
     }

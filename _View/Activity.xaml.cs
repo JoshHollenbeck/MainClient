@@ -11,7 +11,6 @@ namespace MainClient._View
         public Activity()
         {
             InitializeComponent();
-            DataContext = new ActivityVM();
         }
     }
 }

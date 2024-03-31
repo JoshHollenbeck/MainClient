@@ -4,38 +4,165 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:MainClient._ViewModel"
+             xmlns:utilities="clr-namespace:MainClient.Utilities"
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="622"
              Style="{StaticResource Page_Style}">
-
-    <UserControl.DataContext>
-        <vm:TransactionsVM />
-    </UserControl.DataContext>
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                  VerticalScrollBarVisibility="Auto">
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Border BorderThickness="2"
-                    BorderBrush="#cccccc"
-                    Padding="5 5 5 0">
+    <UserControl.Resources>
+        <utilities:CurrencyFormatConverter x:Key="CurrencyFormatConverter" />
+    </UserControl.Resources>
+    <Grid Margin="5">
+        <Border Grid.Row="0"
+                BorderThickness="2"
+                BorderBrush="#cccccc"
+                Padding="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource ContainerHeader}"
                            TextAlignment="Center"
                            Text="Account Transactions" />
-            </Border>
-            <Border Grid.Row="1"
-                    BorderThickness="2 0 2 2"
-                    BorderBrush="#cccccc"
-                    Padding="5">
-                <DataGrid Name="transactionResults"
-                          ItemsSource="{Binding AcctTransaction}"
-                          AutoGenerateColumns="True"
-                          IsReadOnly="True" />
-            </Border>
-        </Grid>
-    </ScrollViewer>
+                <DataGrid Grid.Row="1"
+                          Name="acctTransactionResults"
+                          ItemsSource="{Binding AcctTransactionResults}"
+                          Style="{StaticResource DataGrid}">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Center" />
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Date"
+                                            Binding="{Binding TransactionsDate, StringFormat={}{0:MM/dd/yyyy}}"
+                                            Width="120" />
+                        <DataGridTextColumn Header="Action"
+                                            Binding="{Binding TransactionsAction}"
+                                            Width="60" />
+                        <DataGridTemplateColumn Header="Amount"
+                                                Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding TransactionsAmount, Converter={StaticResource CurrencyFormatConverter}}"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding TransactionsAmount, StringFormat=N2}"
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Fees"
+                                                Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding TransactionsTradeFees, Converter={StaticResource CurrencyFormatConverter}}"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding TransactionsTradeFees, StringFormat=N2}"
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Symbol"
+                                            Binding="{Binding TransactionsTradeSymbol}"
+                                            Width="50" />
+                        <DataGridTextColumn Header="Quantity"
+                                            Binding="{Binding TransactionsTradeQuantity}"
+                                            Width="75" />
+                        <DataGridTemplateColumn Header="Price"
+                                                Width="65">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding TransactionsTradePrice, Converter={StaticResource CurrencyFormatConverter}}"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding TransactionsTradePrice, StringFormat=N2}"
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding TransactionsTradeStatus}"
+                                            Width="50" />
+                        <DataGridTextColumn Header="Bank Routing"
+                                            Binding="{Binding TransactionBankRouting}"
+                                            Width="85" />
+                        <DataGridTextColumn Header="Bank Account"
+                                            Binding="{Binding TransactionBankAcct}"
+                                            Width="110" />
+                        <DataGridTemplateColumn Header="Pre-Balance"
+                                                Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding TransactionsPreBalance, Converter={StaticResource CurrencyFormatConverter}}"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding TransactionsPreBalance, StringFormat=N2}"
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Post-Balance"
+                                                Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding TransactionsPostBalance, Converter={StaticResource CurrencyFormatConverter}}"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding TransactionsPostBalance, StringFormat=N2}"
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Rep ID"
+                                            Binding="{Binding TransactionsRepID}"
+                                            Width="75" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

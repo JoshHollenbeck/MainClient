@@ -28,7 +28,7 @@
                 Padding="5">
             <Grid>
                 <StackPanel Orientation="Horizontal">
-                    <Label Style="{StaticResource EntryText}">ADVANCED SEARCH</Label>
+                    <Label Style="{StaticResource EntryLabelLarge}">ADVANCED SEARCH</Label>
                 </StackPanel>
             </Grid>
         </Border>
@@ -38,24 +38,24 @@
                 Padding="5">
             <Grid>
                 <StackPanel Orientation="Horizontal">
-                    <Label Style="{StaticResource EntryText}">Last Name</Label>
+                    <Label Style="{StaticResource EntryLabelLarge}">Last Name</Label>
                     <TextBox x:Name="LastNameTextBox"
-                             Style="{StaticResource EntryTextBox}"
+                             Style="{StaticResource EntryTextBoxLarge}"
                              Text="{Binding LastName, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
                                         Command="{Binding PerformSearchCommand}" />
                         </TextBox.InputBindings>
                     </TextBox>
-                    <Label Style="{StaticResource EntryText}">First Name</Label>
-                    <TextBox Style="{StaticResource EntryTextBox}"
+                    <Label Style="{StaticResource EntryLabelLarge}">First Name</Label>
+                    <TextBox Style="{StaticResource EntryTextBoxLarge}"
                              Text="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
                                         Command="{Binding PerformSearchCommand}" />
                         </TextBox.InputBindings>
                     </TextBox>
-                    <Label Style="{StaticResource EntryText}">Middle Initial</Label>
+                    <Label Style="{StaticResource EntryLabelLarge}">Middle Initial</Label>
                     <TextBox Style="{StaticResource EntryTextBoxSmall}"
                              Text="{Binding MiddleInitial, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
@@ -72,16 +72,16 @@
                 Padding="5">
             <Grid>
                 <StackPanel Orientation="Horizontal">
-                    <Label Style="{StaticResource EntryText}">Customer ID</Label>
-                    <TextBox Style="{StaticResource EntryTextBox}"
+                    <Label Style="{StaticResource EntryLabelLarge}">Customer ID</Label>
+                    <TextBox Style="{StaticResource EntryTextBoxLarge}"
                              Text="{Binding CustomerID, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
                                         Command="{Binding PerformSearchCommand}" />
                         </TextBox.InputBindings>
                     </TextBox>
-                    <Label Style="{StaticResource EntryText}">Phone</Label>
-                    <TextBox Style="{StaticResource EntryTextBox}"
+                    <Label Style="{StaticResource EntryLabelLarge}">Phone</Label>
+                    <TextBox Style="{StaticResource EntryTextBoxLarge}"
                              Text="{Binding CustPhone, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
@@ -97,16 +97,16 @@
                 Padding="5">
             <Grid>
                 <StackPanel Orientation="Horizontal">
-                    <Label Style="{StaticResource EntryText}">Tax ID</Label>
-                    <TextBox Style="{StaticResource EntryTextBox}"
+                    <Label Style="{StaticResource EntryLabelLarge}">Tax ID</Label>
+                    <TextBox Style="{StaticResource EntryTextBoxLarge}"
                              Text="{Binding CustTaxId, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
                                         Command="{Binding PerformSearchCommand}" />
                         </TextBox.InputBindings>
                     </TextBox>
-                    <Label Style="{StaticResource EntryText}">Postal Code</Label>
-                    <TextBox Style="{StaticResource EntryTextBox}"
+                    <Label Style="{StaticResource EntryLabelLarge}">Postal Code</Label>
+                    <TextBox Style="{StaticResource EntryTextBoxLarge}"
                              Text="{Binding CustZip, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
@@ -122,16 +122,16 @@
                 Padding="5">
             <Grid>
                 <StackPanel Orientation="Horizontal">
-                    <Label Style="{StaticResource EntryText}">Account Number</Label>
-                    <TextBox Style="{StaticResource EntryTextBox}"
+                    <Label Style="{StaticResource EntryLabelLarge}">Account Number</Label>
+                    <TextBox Style="{StaticResource EntryTextBoxLarge}"
                              Text="{Binding AcctNum, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
                                         Command="{Binding PerformSearchCommand}" />
                         </TextBox.InputBindings>
                     </TextBox>
-                    <Label Style="{StaticResource EntryText}">Email Address</Label>
-                    <TextBox Style="{StaticResource EntryTextBox}"
+                    <Label Style="{StaticResource EntryLabelLarge}">Email Address</Label>
+                    <TextBox Style="{StaticResource EntryTextBoxLarge}"
                              Text="{Binding CustEmail, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
@@ -159,18 +159,8 @@
                       IsTabStop="True"
                       ItemsSource="{Binding SearchResults}"
                       SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      SelectionMode="Single"
-                      SelectionUnit="FullRow"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False"
-                      CanUserReorderColumns="False"
-                      CanUserResizeColumns="False"
-                      CanUserResizeRows="False"
-                      CanUserSortColumns="False"
-                      MaxHeight="300"
-                      RowHeaderWidth="0">
+                      Style="{StaticResource DataGrid}"
+                      MaxHeight="300">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="HorizontalContentAlignment"
@@ -180,10 +170,10 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Account Number"
                                         Binding="{Binding AccountNumber}"
-                                        Width="120" />
+                                        Width="110" />
                     <DataGridTextColumn Header="First &amp; Last Name"
                                         Binding="{Binding FirstLastName}"
-                                        Width="135" />
+                                        Width="*" />
                     <DataGridTextColumn Header="Customer ID"
                                         Binding="{Binding CustomerID}"
                                         Width="95" />
@@ -192,10 +182,10 @@
                                         Width="210" />
                     <DataGridTextColumn Header="City"
                                         Binding="{Binding AccountCity}"
-                                        Width="175" />
-                    <DataGridTextColumn Header="State"
+                                        Width="*" />
+                    <DataGridTextColumn Header="ST"
                                         Binding="{Binding AccountState}"
-                                        Width="50" />
+                                        Width="25" />
                     <DataGridTextColumn Header="Zip"
                                         Binding="{Binding AccountZip}"
                                         Width="50" />
@@ -209,4 +199,4 @@
             </DataGrid>
         </Border>
     </Grid>
-</Window>   
+</Window>

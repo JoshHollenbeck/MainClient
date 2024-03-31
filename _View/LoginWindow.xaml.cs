@@ -11,6 +11,7 @@ namespace MainClient._View
         public LoginWindow()
         {
             InitializeComponent();
+            
             Loaded += LoginWindowLoaded;
         }
         
