@@ -62,19 +62,36 @@ namespace MainClient._Model
                     {
                         SearchResult result = new SearchResult
                         {
-                            AccountNumber = reader["Account Number"].ToString(),
-                            FirstLastName = reader["First & Last Name"].ToString(),
-                            CustomerID = reader["Customer Id"].ToString(),
-                            AccountAddress = reader["Address"].ToString(),
-                            AccountCity = reader["City"].ToString(),
-                            AccountState = reader["State"].ToString(),
-                            AccountZip = reader["Zip"].ToString(),
+                            AccountNumber = reader["Acct Num"] as string,
+                            FirstLastName = reader["First & Last Name"] as string,
+                            CustomerID = reader["Cust Id"] as string,
+                            AccountAddress = reader["Address"] as string,
+                            AccountCity = reader["City"] as string,
+                            AccountState = reader["State"] as string,
+                            AccountZip = reader["Zip"] as string,
                         };
                         searchResults.Add(result);
                     }
                 }
 
                 return searchResults;
+            }
+        }
+        public static void InsertAcctAccessHistoryByAcctNum(string acctNum, string repId)
+        {
+            string connectionString = Connection.connectionString;
+            string storedProcedure = "[dbo].[Acct_InsertAcctAccessHistoryByAcctNum]";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
+                command.Parameters.Add(new SqlParameter("@RepId", repId));
+
+                connection.Open();
+                command.ExecuteNonQuery();
             }
         }
     }
