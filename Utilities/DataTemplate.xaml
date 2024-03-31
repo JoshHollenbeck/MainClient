@@ -27,10 +27,6 @@
         <view:AccountOverview />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type vm:BalancesVM}">
-        <view:Balances />
-    </DataTemplate>
-
     <DataTemplate DataType="{x:Type vm:PositionsVM}">
         <view:Positions />
     </DataTemplate>
@@ -53,16 +49,12 @@
         <view:Activity />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type vm:HistoryVM}">
-        <view:History />
+    <DataTemplate DataType="{x:Type vm:AccessHistoryVM}">
+        <view:AccessHistory />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:AccountDepositVM}">
         <view:AccountDeposit />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vm:SplitDepositVM}">
-        <view:SplitDeposit />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:AchLinkVM}">
