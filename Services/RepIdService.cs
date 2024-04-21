@@ -2,43 +2,31 @@ using System;
 
 namespace MainClient.Services
 {
+    // Service class for managing the representative ID and related permissions.
     public class RepIdService
     {
+        // Singleton instance of RepIdService.
         private static readonly RepIdService _instance = new RepIdService();
+
+        // Property to access the singleton instance.
         public static RepIdService Instance => _instance;
-        
-        // private string _selectedRepIdNumber = string.Empty;
 
-        // Adding properties for permissions
-        public string RepId { get; private set; }
-        public bool Trading { get; private set; }
-        public bool MoveMoney { get; private set; }
-        public bool ViewOnly { get; private set; }
-
-        // Private constructor ensures the class cannot be instantiated from outside
+        // Private constructor to prevent external instantiation.
         private RepIdService() { }
 
-        // public event Action SelectedRepIdNumberChanged;
+        // Representative ID.
+        public string RepId { get; private set; }
 
-        // public string SelectedRepIdNumber
-        // {
-        //     get => _selectedRepIdNumber;
-        //     set
-        //     {
-        //         if (_selectedRepIdNumber != value)
-        //         {
-        //             _selectedRepIdNumber = value;
-        //             OnSelectedRepIdNumberChanged();
-        //         }
-        //     }
-        // }
+        // Permission to perform trading.
+        public bool Trading { get; private set; }
 
-        // protected virtual void OnSelectedRepIdNumberChanged()
-        // {
-        //     SelectedRepIdNumberChanged?.Invoke();
-        // }
+        // Permission to move money.
+        public bool MoveMoney { get; private set; }
 
-        // Method to set permissions
+        // Permission for view-only access.
+        public bool ViewOnly { get; private set; }
+
+        // Method to set permissions for the representative ID.
         public void SetPermissions(string repId, bool trading, bool moveMoney, bool viewOnly)
         {
             RepId = repId;
