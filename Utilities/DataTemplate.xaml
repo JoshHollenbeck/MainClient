@@ -13,11 +13,6 @@
         <view:MainWindow />
     </DataTemplate>
 
-    <!-- Clients -->
-    <DataTemplate DataType="{x:Type vm:AddClientVM}">
-        <view:AddClient />
-    </DataTemplate>
-
     <!-- Client & Accounts -->
     <DataTemplate DataType="{x:Type vm:ClientOverviewVM}">
         <view:ClientOverview />
@@ -35,6 +30,10 @@
         <view:Transactions />
     </DataTemplate>
 
+     <DataTemplate DataType="{x:Type vm:AccessHistoryVM}">
+        <view:AccessHistory />
+    </DataTemplate>
+
     <!-- Notes -->
     <DataTemplate DataType="{x:Type vm:AddNotesVM}">
         <view:AddNotes />
@@ -45,29 +44,45 @@
     </DataTemplate>
 
     <!-- Cashiering -->
-    <DataTemplate DataType="{x:Type vm:ActivityVM}">
-        <view:Activity />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vm:AccessHistoryVM}">
-        <view:AccessHistory />
-    </DataTemplate>
-
-    <DataTemplate DataType="{x:Type vm:AccountDepositVM}">
-        <view:AccountDeposit />
-    </DataTemplate>
-
     <DataTemplate DataType="{x:Type vm:AchLinkVM}">
         <view:AchLink />
     </DataTemplate>
 
-    <!-- Trading -->
-    <DataTemplate DataType="{x:Type vm:OrderEntryVM}">
-        <view:OrderEntry />
+    <DataTemplate DataType="{x:Type vm:DepositCheckMultipleVM}">
+        <view:DepositCheckMultiple />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:DepositCheckSingleVM}">
+        <view:DepositCheckSingle />
     </DataTemplate>
     
-    <DataTemplate DataType="{x:Type vm:OrderStatusVM}">
-        <view:OrderStatus />
+    <DataTemplate DataType="{x:Type vm:DepositCheckSplitVM}">
+        <view:DepositCheckSplit />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:WithdrawalAchVM}">
+        <view:WithdrawalAch />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:WithdrawalCheckSingleVM}">
+        <view:WithdrawalCheckSingle />
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type vm:WithdrawalWireVM}">
+        <view:WithdrawalWire />
+    </DataTemplate>
+
+    <!-- Trading -->
+    <DataTemplate DataType="{x:Type vm:TradeBuyVM}">
+        <view:TradeBuy />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:TradeStatusVM}">
+        <view:TradeStatus />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:TradeSellVM}">
+        <view:TradeSell />
     </DataTemplate>
 
 </ResourceDictionary>
