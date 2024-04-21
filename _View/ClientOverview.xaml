@@ -6,8 +6,6 @@
              xmlns:vm="clr-namespace:MainClient._ViewModel"
              xmlns:utilities="clr-namespace:MainClient.Utilities"
              mc:Ignorable="d"
-             d:DesignHeight="600"
-             d:DesignWidth="622"
              Style="{StaticResource Page_Style}">
     <UserControl.Resources>
         <utilities:BoolToBrushConverter x:Key="BoolToBrushConverter"
@@ -68,7 +66,8 @@
                 <Button Style="{StaticResource ContainerButton}"
                         Grid.Column="1"
                         Width="25"
-                        Content="Edit" />
+                        Content="Edit"
+                        Command="{Binding EditInformationCommand}" />
                 <TextBlock Grid.Row="1"
                            Text="Share Affiliates" />
                 <TextBlock Grid.Row="1"
@@ -151,7 +150,8 @@
                 <Button Style="{StaticResource ContainerButton}"
                         Grid.Column="1"
                         Width="25"
-                        Content="Edit" />
+                        Content="Edit"
+                        Command="{Binding EditContactCommand}" />
                 <!-- Edit button. -->
                 <StackPanel Grid.Row="1">
                     <!-- StackPanel for displaying contact information. -->
@@ -166,27 +166,6 @@
                                 Visibility="{Binding CustPhoneBusiness, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}">
                         <TextBlock Text="Business: " />
                         <TextBlock Text="{Binding CustPhoneBusiness}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Dial Home:"
-                                   Margin="0,0,5,0" />
-                        <Button Padding="2"
-                                Style="{StaticResource Button}">
-                            <Button.Content>
-                                <Binding Path="CustPhoneHome" />
-                            </Button.Content>
-                        </Button>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="{Binding CustPhoneBusiness, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}">
-                        <TextBlock Text="Dial Business:"
-                                   Margin="0,0,5,0" />
-                        <Button Padding="2"
-                                Style="{StaticResource Button}">
-                            <Button.Content>
-                                <Binding Path="CustPhoneBusiness" />
-                            </Button.Content>
-                        </Button>
                     </StackPanel>
                     <!-- Display the home phone number with a Dial instruction. -->
                     <TextBlock Style="{StaticResource ContainerTitle}"
@@ -234,6 +213,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -245,17 +226,37 @@
                 <Button Style="{StaticResource ContainerButton}"
                         Grid.Column="1"
                         Width="25"
-                        Content="Edit" />
+                        Content="Edit"
+                        Command="{Binding EditEmploymentCommand}" />
                 <StackPanel Grid.Row="1">
                     <TextBlock Style="{StaticResource ContainerTitle}"
                                Text="Employment Status" />
                     <TextBlock Text="{Binding CustEmploymentStatus, Converter={StaticResource EmploymentStatusConverter}}" />
+                    <StackPanel Orientation="Vertical"
+                                Visibility="{Binding CustEmployer, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}">
+                        <TextBlock Style="{StaticResource ContainerTitle}" Text="Employer Name" />
+                        <TextBlock Text="{Binding CustEmployer}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical"
+                                Visibility="{Binding CustOccupation, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}">
+                        <TextBlock Style="{StaticResource ContainerTitle}" Text="Occupation/Positions " />
+                        <TextBlock Text="{Binding CustOccupation}" />
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock Grid.Row="2"
+                           Grid.ColumnSpan="2"
+                           Style="{StaticResource ContainerHeader}"
+                           Text="Tax Information" />
+                <Button Style="{StaticResource ContainerButton}"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Width="25"
+                        Content="Edit"
+                        Command="{Binding EditTaxCommand}" />
+                <StackPanel Grid.Row="3">
                     <TextBlock Style="{StaticResource ContainerTitle}"
-                               Text="Employer Name" />
-                    <TextBlock Text="{Binding CustEmployer}" />
-                    <TextBlock Style="{StaticResource ContainerTitle}"
-                               Text="Occupation/Position" />
-                    <TextBlock Text="{Binding CustOccupation}" />
+                               Text="Tax ID" />
+                    <TextBlock Text="{Binding CustTaxId}" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -271,6 +272,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource ContainerHeader}"
+                           TextAlignment="Center"
                            Text="Accounts" />
                 <DataGrid Grid.Row="1"
                           Name="clientAccountResults"
@@ -315,7 +317,7 @@
                                             Width="110" />
                         <DataGridTextColumn Header="Type"
                                             Binding="{Binding AccountType}"
-                                            Width="300" />
+                                            Width="*" />
                         <DataGridTextColumn Header="Status"
                                             Binding="{Binding AccountStatus, Converter={StaticResource AccountStatusConverter}}"
                                             Width="90" />
@@ -341,6 +343,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Style="{StaticResource ContainerHeader}"
                            Text="Notes"
+                           TextAlignment="Center"
                            Grid.ColumnSpan="3" />
                 <Button Style="{StaticResource ContainerButton}"
                         Grid.Column="1"
@@ -370,7 +373,7 @@
                                             Binding="{Binding Note}"
                                             Width="*" />
                         <DataGridTextColumn Header="Created"
-                                            Binding="{Binding NoteCreated}"
+                                            Binding="{Binding NoteCreated, StringFormat='MM/dd/yyyy HH:mm'}"
                                             Width="110" />
                         <DataGridTextColumn Header="Rep ID"
                                             Binding="{Binding NoteRepID}"
@@ -396,10 +399,11 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Style="{StaticResource ContainerHeader}"
                            Text="Recent Transactions"
+                           TextAlignment="Center"
                            Grid.ColumnSpan="2" />
                 <Button Style="{StaticResource ContainerButton}"
                         Grid.Column="1"
-                        Command="{Binding MoreTransactionsCommand}"
+                        Command="{Binding MoreTransactionCommand}"
                         Content="More" />
                 <DataGrid Grid.Row="1"
                           Grid.ColumnSpan="2"
@@ -418,11 +422,11 @@
                                             Binding="{Binding TransactionAccountNumber}"
                                             Width="110" />
                         <DataGridTextColumn Header="Date"
-                                            Binding="{Binding TransactionDate, StringFormat={}{0:MM/dd/yyyy}}"
+                                            Binding="{Binding TransactionDate, StringFormat='MM/dd/yyyy HH:mm'}"
                                             Width="110" />
                         <DataGridTextColumn Header="Action"
                                             Binding="{Binding TransactionAction}"
-                                            Width="50" />
+                                            Width="*" />
                         <DataGridTemplateColumn Header="Amount"
                                                 Width="110">
                             <DataGridTemplateColumn.CellTemplate>
@@ -444,7 +448,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Fees"
-                                                Width="56">
+                                                Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -456,6 +460,46 @@
                                                    VerticalAlignment="Center"
                                                    Grid.Column="0" />
                                         <TextBlock Text="{Binding Fees, StringFormat=N2}"
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Pre-Balance"
+                                                Width="110">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding PreBalance, Converter={StaticResource CurrencyFormatConverter}}"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding PreBalance, StringFormat=N2}"
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Pre-Balance"
+                                                Width="110">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding PostBalance, Converter={StaticResource CurrencyFormatConverter}}"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
+                                        <TextBlock Text="{Binding PostBalance, StringFormat=N2}"
                                                    TextAlignment="Right"
                                                    VerticalAlignment="Center"
                                                    Grid.Column="1" />

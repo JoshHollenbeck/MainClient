@@ -3,7 +3,7 @@ using MainClient._ViewModel;
 
 namespace MainClient._View
 {
-        public partial class Positions : UserControl
+    public partial class Positions : UserControl
     {
         public Positions()
         {

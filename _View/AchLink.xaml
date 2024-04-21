@@ -6,8 +6,6 @@
              xmlns:vm="clr-namespace:MainClient._ViewModel"
              xmlns:utilities="clr-namespace:MainClient.Utilities"
              mc:Ignorable="d"
-             d:DesignHeight="600"
-             d:DesignWidth="622"
              Style="{StaticResource Page_Style}">
     <UserControl.Resources>
         <utilities:CurrencyFormatConverter x:Key="CurrencyFormatConverter" />
@@ -15,7 +13,6 @@
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -81,55 +78,6 @@
                 </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource ContainerHeader}"
                            TextAlignment="Center"
-                           Text="ACH Payment" />
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Label Style="{StaticResource EntryLabelLarge}">Bank Routing</Label>
-                    <ComboBox Height="22"
-                              VerticalContentAlignment="Center"
-                              Width="325"
-                              Grid.Column="1"
-                              Name="achPaymentListResults"
-                              DisplayMemberPath="DisplayName"
-                              SelectedValuePath="PaymentAcctNum"
-                              SelectedItem="{Binding SelectedAchPayment}"
-                              ItemsSource="{Binding AchPaymentListResults}"
-                              IsTextSearchEnabled="True"
-                              MaxDropDownHeight="275">
-                    </ComboBox>
-                    <Label Grid.Column="2"
-                           Style="{StaticResource EntryLabelLarge}">Payment Amount</Label>
-                    <TextBox Grid.Column="3"
-                             Style="{StaticResource EntryTextBoxLarge}"
-                             InputScope="Number"
-                             Text="{Binding ACHPaymentAmount, UpdateSourceTrigger=PropertyChanged}"/>
-                    <Button Grid.Column="5"
-                            HorizontalAlignment="Right"
-                            Style="{StaticResource Button}"
-                            Content="Submit ACH Payment"
-                            Command="{Binding AddAchPaymentCommand}"
-                            Margin="5" />
-                </Grid>
-            </Grid>
-        </Border>
-        <Border Grid.Row="2"
-                BorderThickness="2 0 2 2"
-                BorderBrush="#cccccc"
-                Padding="5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource ContainerHeader}"
-                           TextAlignment="Center"
                            Text="Recent ACH Transactions" />
                 <DataGrid Grid.Row="1"
                           Name="achTransactionResults"
@@ -182,7 +130,7 @@
                 </DataGrid>
             </Grid>
         </Border>
-        <Border Grid.Row="3"
+        <Border Grid.Row="2"
                 BorderThickness="2 0 2 2"
                 BorderBrush="#cccccc"
                 Padding="5">
@@ -214,11 +162,11 @@
                               ItemsSource="{Binding AchBankResults}"
                               SelectedItem="{Binding SelectedBank}"
                               IsTextSearchEnabled="True"
-                              TextSearch.TextPath="LUAchBankName"
+                              TextSearch.TextPath="AchBankName"
                               MaxDropDownHeight="275">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding LUAchBankName}" />
+                                <TextBlock Text="{Binding AchBankName}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -227,7 +175,7 @@
                     <TextBlock Grid.Column="3"
                                TextAlignment="Left"
                                Style="{StaticResource EntryTextBlockLarge}"
-                               Text="{Binding SelectedBank.LUAchRoutingNumber}" />
+                               Text="{Binding SelectedBank.AchRoutingNumber}" />
                     <Label Style="{StaticResource EntryLabelMedium}"
                            Grid.Column="4">Account Type</Label>
                     <ComboBox Height="22"

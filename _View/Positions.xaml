@@ -6,8 +6,6 @@
              xmlns:vm="clr-namespace:MainClient._ViewModel"
              xmlns:utilities="clr-namespace:MainClient.Utilities"
              mc:Ignorable="d"
-             d:DesignHeight="600"
-             d:DesignWidth="622"
              Style="{StaticResource Page_Style}">
     <UserControl.Resources>
         <utilities:CurrencyFormatConverter x:Key="CurrencyFormatConverter" />
@@ -21,14 +19,26 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock Style="{StaticResource ContainerHeader}"
-                            TextAlignment="Center"
-                            Text="Account Balances" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.ColumnSpan="2"
+                           Style="{StaticResource ContainerHeader}"
+                           TextAlignment="Center"
+                           Text="Account Holdings" />
+                <Button Grid.Column="1"
+                        Content="Print"
+                        Command="{Binding PrintCommand}"
+                        Style="{StaticResource ContainerButton}"
+                        Margin="5 -11 0 0" />
                 <DataGrid Grid.Row="1"
-                            Name="acctPositionResults"
-                            ItemsSource="{Binding AcctPositionResults}"
-                            Style="{StaticResource DataGrid}">
+                          Grid.ColumnSpan="2"
+                          Name="acctPositionResults"
+                          ItemsSource="{Binding AcctPositionResults}"
+                          Style="{StaticResource DataGrid}">
                     <DataGrid.Resources>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="HorizontalContentAlignment"
@@ -38,12 +48,18 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Symbol"
                                             Binding="{Binding PositionsStockTicker}"
-                                            Width="85" />
+                                            Width="91" />
+                        <DataGridTextColumn Header="Name"
+                                            Binding="{Binding PositionsStockName}"
+                                            Width="400" />
+                        <DataGridTextColumn Header="Name"
+                                            Binding="{Binding PositionsExchange}"
+                                            Width="110" />
                         <DataGridTextColumn Header="Quantity"
                                             Binding="{Binding PositionsQuantity}"
-                                            Width="85" />
+                                            Width="110" />
                         <DataGridTemplateColumn Header="Dollar Cost Average"
-                                                Width="65">
+                                                Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -52,18 +68,18 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding PositionsAverageCost, Converter={StaticResource CurrencyFormatConverter}}"
-                                                    VerticalAlignment="Center"
-                                                    Grid.Column="0" />
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
                                         <TextBlock Text="{Binding PositionsAverageCost, StringFormat=N2}"
-                                                    TextAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    Grid.Column="1" />
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Current Stock Price"
-                                                Width="120">
+                                                Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -72,18 +88,18 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding PositionsCurrentPrice, Converter={StaticResource CurrencyFormatConverter}}"
-                                                    VerticalAlignment="Center"
-                                                    Grid.Column="0" />
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
                                         <TextBlock Text="{Binding PositionsCurrentPrice, StringFormat=N2}"
-                                                    TextAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    Grid.Column="1" />
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Current Total Value"
-                                                Width="120">
+                                                Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -92,12 +108,12 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding PositionsCurrentValue, Converter={StaticResource CurrencyFormatConverter}}"
-                                                    VerticalAlignment="Center"
-                                                    Grid.Column="0" />
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0" />
                                         <TextBlock Text="{Binding PositionsCurrentValue, StringFormat=N2}"
-                                                    TextAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    Grid.Column="1" />
+                                                   TextAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="1" />
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

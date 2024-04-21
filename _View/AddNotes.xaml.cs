@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using MainClient._ViewModel;
-using MainClient.Services;
 
 namespace MainClient._View
 {
@@ -10,20 +9,12 @@ namespace MainClient._View
         {
             InitializeComponent();
             
-            this.Loaded += AddNotes_Loaded;         
-        }
-
-        private void AddNotes_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is AddNotesVM viewModel)
+            var viewModel = new AddNotesVM
             {
-                viewModel.CloseNote = CloseWindow;
-            }
-        }
+                CloseAndLoadAccountAction = (accountNumber) => this.Close()
+            };
 
-        private void CloseWindow()
-        {
-            this.Close(); // Closes the window
+            DataContext = viewModel;        
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using MainClient._Model;
 using MainClient._ViewModel;
 
@@ -14,17 +16,12 @@ namespace MainClient._View
 
         private void ClientAcctsResults_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count > 0)
+            if (sender is ComboBox comboBox)
             {
-                var selectedAccount = e.AddedItems[0] as MainWindowModel;
-                if (selectedAccount != null)
-                {
-                    var mainWindowVM = DataContext as MainWindowVM;
-                    if (mainWindowVM != null)
-                    {
-                        // Assuming you have a method or way to handle the change in ViewModel
-                        mainWindowVM.HandleSelectionChange(selectedAccount);
-                    }
+                var viewModel = comboBox.DataContext as MainWindowVM;
+                if (viewModel != null && comboBox.SelectedItem is MainWindowModel selectedAccount)
+                {   
+                    viewModel.HandleSelectionChange(selectedAccount);
                 }
             }
         }
@@ -33,9 +30,5 @@ namespace MainClient._View
         {
             Close();
         }
-
-        private void SwitchClient_Click(object sender, RoutedEventArgs e) { }
-
-        private void ClearSession_Click(object sender, RoutedEventArgs e) { }
     }
 }

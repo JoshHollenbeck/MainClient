@@ -1,18 +1,20 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
 using MainClient._ViewModel;
 
 namespace MainClient._View
 {
-    /// <summary>
-    /// Interaction logic for Transactions.xaml
-    /// </summary>
-    public partial class AddClient : UserControl
+    public partial class AddClient : Window
     {
-       
         public AddClient()
         {
             InitializeComponent();
-        }
 
+            var viewModel = new AddClientVM
+            {
+                CloseAndLoadAccountAction = (customerId) => this.Close()
+            };
+
+            DataContext = viewModel;
+        }
     }
 }

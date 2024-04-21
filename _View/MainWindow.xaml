@@ -7,9 +7,9 @@
         xmlns:Menu="clr-namespace:MainClient.Utilities"
         mc:Ignorable="d"
         Title="Main Client"
-        MinHeight="800"
+        MinHeight="850"
         MinWidth="1100"
-        Height="800"
+        Height="850"
         Width="1100"
         WindowStartupLocation="CenterScreen"
         WindowStyle="SingleBorderWindow">
@@ -39,22 +39,14 @@
                     <MenuItem Header="File">
                         <MenuItem Header="New Session"
                                   Command="{Binding NewSessionCommand}" />
-                        <MenuItem Header="Print Preview"
-                                  Command="{Binding PrintPreviewCommand}" />
-                        <MenuItem Header="Print"
-                                  Command="{Binding PrintCommand}" />
                         <MenuItem Header="Exit"
                                   Click="Exit" />
                     </MenuItem>
                     <MenuItem Header="Clients">
                         <MenuItem Header="Add Client"
                                   Command="{Binding AddClientCommand}" />
-                    </MenuItem>
-                    <MenuItem Header="Help">
-                        <MenuItem Header="Main Client Knowledge Center"
-                                  Command="{Binding MainClientKnowledgeCommand}" />
-                        <MenuItem Header="Tips and Tricks"
-                                  Command="{Binding TipsAndTricksCommand}" />
+                        <MenuItem Header="Add Account"
+                                  Command="{Binding AddAccountCommand}" />
                     </MenuItem>
                 </Menu>
             </Grid>
@@ -67,7 +59,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBox Width="200"
                                  Margin="5"
-                                 Text="{Binding SearchText}">
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter"
                                             Command="{Binding SearchCommand}" />
@@ -102,13 +94,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0"
-                               Margin="5"
-                               Text="{Binding ClientFullName}" />
-                    <Button Style="{StaticResource Button}"
-                            Grid.Column="1"
-                            Margin="5, 2, 5, 5"
-                            Click="SwitchClient_Click">Switch</Button>
+                    <TextBlock Margin="5"
+                               Text="{Binding ClientName}" />
                     <ComboBox Name="clientAcctsResults"
                               ItemsSource="{Binding ClientAcctsResults}"
                               DisplayMemberPath="ClientAcctAndName"
@@ -144,7 +131,7 @@
                                   Command="{Binding ClientOverviewCommand}" />
                         <MenuItem Header="Account Overview"
                                   Command="{Binding AccountOverviewCommand}" />
-                        <MenuItem Header="Positions"
+                        <MenuItem Header="Holdings"
                                   Command="{Binding PositionsCommand}" />
                         <MenuItem Header="Transactions"
                                   Command="{Binding TransactionsCommand}" />
@@ -158,18 +145,40 @@
                                   Command="{Binding AddNotesCommand}" />
                     </MenuItem>
                     <MenuItem Header="Cashiering">
-                        <MenuItem Header="Activity &amp; Standing Instructions"
-                                  Command="{Binding ActivityCommand}" />
-                        <MenuItem Header="Account Deposit"
-                                  Command="{Binding AccountDepositCommand}" />
+                        <MenuItem Header="Account Deposit">
+                            <MenuItem Header="Cash Deposit"
+                                      Command="{Binding DepositCashCommand}" />
+                            <MenuItem Header="Single Check Deposit"
+                                      Command="{Binding DepositCheckSingleCommand}" />
+                            <MenuItem Header="Split Check Deposit"
+                                      Command="{Binding DepositCheckSplitCommand}" />
+                            <MenuItem Header="Multiple Check Deposit"
+                                      Command="{Binding DepositCheckMultipleCommand}" />
+                        </MenuItem>
+                        <MenuItem Header="Account Withdrawal">
+                            <MenuItem Header="Cash Withdrawal"
+                                      Command="{Binding WithdrawalCashCommand}" />
+                            <MenuItem Header="Journal Withdrawal"
+                                      Command="{Binding WithdrawalJournalCommand}" />
+                            <MenuItem Header="Single Check Withdrawal"
+                                      Command="{Binding WithdrawalCheckSingleCommand}" />
+                            <MenuItem Header="ACH Withdrawal"
+                                      Command="{Binding WithdrawalAchCommand}" />
+                            <MenuItem Header="Wire Withdrawal"
+                                      Command="{Binding WithdrawalWireCommand}" />
+                        </MenuItem>
                         <MenuItem Header="ACH Link"
                                   Command="{Binding AchLinkCommand}" />
                     </MenuItem>
                     <MenuItem Header="Trading">
-                        <MenuItem Header="Order Entry"
-                                  Command="{Binding OrderEntryCommand}" />
-                        <MenuItem Header="Order Status"
-                                  Command="{Binding OrderStatusCommand}" />
+                        <MenuItem Header="Trade Entry">
+                            <MenuItem Header="Buy"
+                                      Command="{Binding TradeBuyCommand}" />
+                            <MenuItem Header="Sell"
+                                      Command="{Binding TradeSellCommand}" />
+                        </MenuItem>
+                        <MenuItem Header="Trade Status"
+                                  Command="{Binding TradeStatusCommand}" />
                     </MenuItem>
                 </Menu>
             </Border>
