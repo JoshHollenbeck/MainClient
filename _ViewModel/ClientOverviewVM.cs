@@ -4,7 +4,6 @@ using MainClient.Utilities;
 using MainClient.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows;
 
 namespace MainClient._ViewModel
 {
@@ -42,6 +41,7 @@ namespace MainClient._ViewModel
         public string CustBranchCity => _clientDetails?.CustBranchCity;
         public string CustBranchState => _clientDetails?.CustBranchState;
         public string CustBranchZip => _clientDetails?.CustBranchZip;
+        public string CustTaxId => _clientDetails?.CustTaxId;
         
         private ObservableCollection<ClientOverviewModel> _clientAccountResults = new ObservableCollection<ClientOverviewModel>();
         public ObservableCollection<ClientOverviewModel> ClientAccountResults
@@ -85,8 +85,28 @@ namespace MainClient._ViewModel
             }
         }
 
-        public ClientOverviewVM(string accountNumber)
+        public ICommand EditContactCommand { get; }
+        public ICommand EditEmploymentCommand { get; }
+        public ICommand EditInformationCommand { get; }
+        public ICommand EditTaxCommand { get; }
+        public ICommand ViewNotesCommand { get; }
+        public ICommand AddNotesCommand { get; }
+        public ICommand MoreTransactionCommand { get; }
+        public ClientOverviewVM(
+            string accountNumber,
+            IDialogService dialogService,
+            ICommand[] commands) : base()
         {
+            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+
+            EditContactCommand = commands[0];
+            EditEmploymentCommand = commands[1];
+            EditInformationCommand = commands[2];
+            EditTaxCommand = commands[3];
+            ViewNotesCommand = commands[4];
+            AddNotesCommand = commands[5];
+            MoreTransactionCommand = commands[6];
+            
             string acctNum = accountNumber;
             FetchClienttDetails(acctNum);
         }
@@ -126,43 +146,6 @@ namespace MainClient._ViewModel
             }
 
             OnPropertyChanged(String.Empty);
-        }
-
-        public ICommand ViewNotesCommand { get; }
-        private void ViewNotes(object obj) 
-        {
-            var accountNumber = AccountService.Instance.SelectedAccountNumber;
-            if (string.IsNullOrEmpty(accountNumber))
-            {
-                MessageBox.Show("No account selected", "Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            else
-            {
-                if (!RepIdService.Instance.Trading && !RepIdService.Instance.MoveMoney && !RepIdService.Instance.ViewOnly)
-                {
-                    MessageBox.Show("You do not have the necessary permissions to view transactions.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return; // Exit the method if no permissions are granted
-                }
-
-                LoadViewModel(accountNumber, accNum => new ViewNotesVM(accNum));
-            }
-        }
-
-        public ICommand AddNotesCommand { get; private set; }
-        
-        private void AddNotes(object obj)
-        {
-            // _dialogService.OpenDialog<MainClient._View.AddNotes>();
-        }
-
-        public ClientOverviewVM(IDialogService dialogService)
-        {
-            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
-
-            ViewNotesCommand = new RelayCommand(ViewNotes);
-            AddNotesCommand = new RelayCommand(AddNotes);
-            // TODO More Transactions Command
-            // MoreTransactionsCommand
         }
     }
 }

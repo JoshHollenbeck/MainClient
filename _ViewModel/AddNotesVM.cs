@@ -40,17 +40,22 @@ namespace MainClient._ViewModel
             CancelCommand = new RelayCommand(ExecuteCancel);
         }
 
+        public Action<string> CloseAndLoadAccountAction { get; set; }
+
         private void ExecuteAddNote(object parameter)
         {
-            string accountNumber = AccountService.Instance.SelectedAccountNumber;
+            string accountNumber = AccountNumService.Instance.SelectedAccountNumber;
             string repId = RepIdService.Instance.RepId;
 
             try
             {
-                AddNotesModel.InsertAcctNotesByAcctNum(accountNumber, NoteText, repId);
-                // Logic after successful note addition
-                NoteText = string.Empty;
-                CloseNote?.Invoke();
+                if (NoteText != null)
+                {
+                    AddNotesModel.InsertAcctNotesByAcctNum(accountNumber, NoteText, repId);
+                    NoteText = string.Empty;
+                    
+                    CloseAndLoadAccountAction?.Invoke(accountNumber);
+                }
             }
             catch (Exception ex)
             {

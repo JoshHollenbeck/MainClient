@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,69 +15,68 @@ using MainClient.Utilities;
 
 namespace MainClient._ViewModel
 {
-    class TransactionsVM : ViewModelBase
+    class TradeStatusVM : ViewModelBase
     {
-        private ObservableCollection<PrinterService> _printerTransactionResults =
+        private ObservableCollection<PrinterService> _printerTradeResults =
             new ObservableCollection<PrinterService>();
-        public ObservableCollection<PrinterService> PrinterTransactionResults
+        public ObservableCollection<PrinterService> PrinterTradeResults
         {
-            get => _printerTransactionResults;
+            get => _printerTradeResults;
             set
             {
-                if (_printerTransactionResults != value)
+                if (_printerTradeResults != value)
                 {
-                    _printerTransactionResults = value;
-                    OnPropertyChanged(nameof(PrinterTransactionResults));
+                    _printerTradeResults = value;
+                    OnPropertyChanged(nameof(PrinterTradeResults));
                 }
             }
         }
 
-        private ObservableCollection<TransactionsModel> _acctTransactionResults =
-            new ObservableCollection<TransactionsModel>();
-        public ObservableCollection<TransactionsModel> AcctTransactionResults
+        private ObservableCollection<TradeStatusModel> _acctTradeResults =
+            new ObservableCollection<TradeStatusModel>();
+        public ObservableCollection<TradeStatusModel> AcctTradeResults
         {
-            get => _acctTransactionResults;
+            get => _acctTradeResults;
             set
             {
-                if (_acctTransactionResults != value)
+                if (_acctTradeResults != value)
                 {
-                    _acctTransactionResults = value;
-                    OnPropertyChanged(nameof(AcctTransactionResults));
+                    _acctTradeResults = value;
+                    OnPropertyChanged(nameof(AcctTradeResults));
                 }
             }
         }
 
-        public TransactionsVM(string accountNumber)
+        public TradeStatusVM(string accountNumber)
         {
             string acctNum = accountNumber;
-            FetchTransactionDetails(acctNum);
+            FetchTradeDetails(acctNum);
+
             PrintCommand = new RelayCommand(ExecutePrint);
 
             StartDate = DateTime.Now.AddMonths(-1);
             EndDate = DateTime.Now;
         }
 
-        private void FetchTransactionDetails(string acctNum)
+        private void FetchTradeDetails(string acctNum)
         {
-            var acctTransactionList = TransactionsModel.GetAcctTransactionsByAcctNum(acctNum);
-            if (acctTransactionList != null)
+            var acctTradeList = TradeStatusModel.GetAcctTransactionsTradeByAcctNum(acctNum);
+            if (acctTradeList != null)
             {
-                _acctTransactionResults.Clear();
-                foreach (var accountTrans in acctTransactionList)
+                _acctTradeResults.Clear();
+                foreach (var accountTrans in acctTradeList)
                 {
-                    _acctTransactionResults.Add(accountTrans);
+                    _acctTradeResults.Add(accountTrans);
                 }
             }
 
-            var printerTransactionList = PrinterService.GetAcctTransactionPrintInfoByAcctNum(
-                acctNum
-            );
-            if (printerTransactionList != null)
+            var printerTradeList = PrinterService.GetAcctTransactionPrintInfoByAcctNum(acctNum);
+            if (printerTradeList != null)
             {
-                _printerTransactionResults.Clear();
-                foreach (var printerTrans in printerTransactionList)
+                _printerTradeResults.Clear();
+                foreach (var printerTrans in printerTradeList)
                 {
-                    _printerTransactionResults.Add(printerTrans);
+                    _printerTradeResults.Add(printerTrans);
                 }
             }
 
@@ -115,18 +114,7 @@ namespace MainClient._ViewModel
         private FlowDocument CreateFlowDocumentForPrinting()
         {
             // Define withdrawal types to sort transactions.
-            var withdrawalTypes = new HashSet<string>
-            {
-                "CASH-W",
-                "BUY",
-                "CHCK",
-                "DEBIT",
-                "CREDT",
-                "ACH-W",
-                "WIRE-W",
-                "ATM-W",
-                "JRNL-W"
-            };
+            var buyTypes = new HashSet<string> { "BUY" };
 
             // Create a new FlowDocument
             FlowDocument flowDoc = new FlowDocument
@@ -179,9 +167,9 @@ namespace MainClient._ViewModel
 
             Paragraph clientInfoParagraph = new Paragraph();
 
-            if (PrinterTransactionResults.Any())
+            if (PrinterTradeResults.Any())
             {
-                var transaction = PrinterTransactionResults[0];
+                var transaction = PrinterTradeResults[0];
 
                 // Check if Address2 is present
                 if (string.IsNullOrWhiteSpace(transaction.PrinterContactAddres2))
@@ -232,9 +220,9 @@ namespace MainClient._ViewModel
             // Account statement info
             Paragraph accountInfoParagraph = new Paragraph();
 
-            if (PrinterTransactionResults.Any())
+            if (PrinterTradeResults.Any())
             {
-                var transaction = PrinterTransactionResults[0];
+                var transaction = PrinterTradeResults[0];
 
                 Rectangle rect = new Rectangle
                 {
@@ -246,7 +234,7 @@ namespace MainClient._ViewModel
                 accountInfoParagraph.Inlines.Add(inlineContainer);
 
                 // Create a Run for the account type and make it bold and larger
-                Run accountTypeRun = new Run(transaction.PrinterAcctType + " Account Statement")
+                Run accountTypeRun = new Run(transaction.PrinterAcctType + " Trade Statement")
                 {
                     FontSize = 12,
                     FontWeight = FontWeights.Bold
@@ -381,7 +369,7 @@ namespace MainClient._ViewModel
 
             // Set fixed column widths based on content
             // Width must equal 1010
-            int[] columnWidths = { 161, 300, 160, 160, 80, 149 };
+            int[] columnWidths = { 107, 362, 107, 108, 108, 108, 108 };
             foreach (int width in columnWidths)
             {
                 dgTable.Columns.Add(new TableColumn { Width = new GridLength(width) });
@@ -399,11 +387,12 @@ namespace MainClient._ViewModel
             string[] headers =
             {
                 "Date",
-                "Description",
-                "Withdrawals",
-                "Deposits",
-                "Fees",
-                "Balance"
+                "Asset",
+                "Buy",
+                "Sell",
+                "Quantity",
+                "Market Price",
+                "Fees"
             };
 
             // Add headers to the header row
@@ -422,8 +411,8 @@ namespace MainClient._ViewModel
             int rowIndex = 0;
 
             foreach (
-                TransactionsModel transaction in AcctTransactionResults.Where(
-                    t => t.TransactionsDate >= StartDate && t.TransactionsDate <= EndDate
+                TradeStatusModel transaction in AcctTradeResults.Where(
+                    t => t.TradeDate >= StartDate && t.TradeDate <= EndDate
                 )
             )
             {
@@ -431,54 +420,58 @@ namespace MainClient._ViewModel
 
                 // Add date cell
                 TableCell dateCell = new TableCell(
-                    new Paragraph(
-                        new Run(transaction.TransactionsDate?.ToString("MM/dd/yyyy") ?? "N/A")
-                    )
+                    new Paragraph(new Run(transaction.TradeDate?.ToString("MM/dd/yyyy") ?? "N/A"))
                 );
 
-                // Add description cell
-                TableCell descriptionCell = new TableCell(
-                    new Paragraph(new Run(transaction.TransactionsActionLong))
+                // Add symbol cell
+                TableCell symbolCell = new TableCell(
+                    new Paragraph(new Run(transaction.TradeName))
                 );
 
-                // Initialize cells for Withdrawals and Deposits
-                string amountString = transaction.TransactionsAmount?.ToString("C") ?? "N/A";
-                string withdrawalAmount = "—";
-                string depositAmount = "—";
-
-                // Check if the transaction is a withdrawal
-                if (withdrawalTypes.Contains(transaction.TransactionsAction))
-                {
-                    withdrawalAmount = amountString;
-                }
-                else
-                {
-                    depositAmount = amountString;
-                }
-
-                // Add withdrawal cell
-                TableCell withdrawalCell = new TableCell(
-                    new Paragraph(new Run(withdrawalAmount)) { TextAlignment = TextAlignment.Right }
-                );
-
-                // Add deposit cell
-                TableCell depositCell = new TableCell(
-                    new Paragraph(new Run(depositAmount)) { TextAlignment = TextAlignment.Right }
-                );
-
-                // Add fees cell
-                TableCell feesCell = new TableCell(
-                    new Paragraph(new Run(transaction.TransactionsTradeFees?.ToString("C") ?? "—"))
+                // Add symbol cell
+                TableCell quantityCell = new TableCell(
+                    new Paragraph(new Run(transaction.TradeQuantity.ToString()))
                     {
                         TextAlignment = TextAlignment.Right
                     }
                 );
 
-                // Add balance cell
-                TableCell balanceCell = new TableCell(
-                    new Paragraph(
-                        new Run(transaction.TransactionsPostBalance?.ToString("C") ?? "—")
-                    )
+                // Add market price cell
+                TableCell priceCell = new TableCell(
+                    new Paragraph(new Run(transaction.TradePrice?.ToString("C") ?? "—"))
+                    {
+                        TextAlignment = TextAlignment.Right
+                    }
+                );
+
+                // Initialize cells for Buy and Sell
+                string amountString = transaction.TradeAmount?.ToString("C") ?? "N/A";
+                string buyAmount = "—";
+                string sellAmount = "—";
+
+                // Check if the transaction is a buy
+                if (buyTypes.Contains(transaction.TradeAction))
+                {
+                    buyAmount = amountString;
+                }
+                else
+                {
+                    sellAmount = amountString;
+                }
+
+                // Add buy cell
+                TableCell buyCell = new TableCell(
+                    new Paragraph(new Run(buyAmount)) { TextAlignment = TextAlignment.Right }
+                );
+
+                // Add sell cell
+                TableCell sellCell = new TableCell(
+                    new Paragraph(new Run(sellAmount)) { TextAlignment = TextAlignment.Right }
+                );
+
+                // Add fees cell
+                TableCell feesCell = new TableCell(
+                    new Paragraph(new Run(transaction.TradeFees?.ToString("C") ?? "—"))
                     {
                         TextAlignment = TextAlignment.Right
                     }
@@ -495,11 +488,12 @@ namespace MainClient._ViewModel
                 }
 
                 row.Cells.Add(dateCell);
-                row.Cells.Add(descriptionCell);
-                row.Cells.Add(withdrawalCell);
-                row.Cells.Add(depositCell);
+                row.Cells.Add(symbolCell);
+                row.Cells.Add(buyCell);
+                row.Cells.Add(sellCell);
+                row.Cells.Add(quantityCell);
+                row.Cells.Add(priceCell);
                 row.Cells.Add(feesCell);
-                row.Cells.Add(balanceCell);
 
                 // Add the row to the table's row groups
                 dgTable.RowGroups[0].Rows.Add(row);

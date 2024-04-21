@@ -2,13 +2,17 @@ using System;
 using System.Windows;
 using MainClient._Model;
 using MainClient.Utilities;
+using MainClient.Services;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace MainClient._ViewModel
 {
     class AccountOverviewVM : ViewModelBase
     {
+        private readonly IDialogService _dialogService;
+
         private AccountOverviewModel _accountDetails;
 
         // Properties to bind to the view
@@ -201,9 +205,32 @@ namespace MainClient._ViewModel
             }
         }
 
-        public AccountOverviewVM(string accountNumber)
+        public ICommand AddBeneficiaryCommand  { get; private set; }
+        public ICommand EditBeneficiaryCommand { get; private set; }
+        public ICommand AddPowerOfAttorneyCommand { get; private set; }        
+        public ICommand EditPowerOfAttorneyCommand { get; private set; }
+        public ICommand EditLimitCommand { get; private set; }
+        public ICommand EditContactCommand { get; private set; }
+        public ICommand EditPasswordCommand { get; private set; }
+
+
+        public AccountOverviewVM(
+            string accountNumber,
+            IDialogService dialogService,
+            ICommand[] commands) : base()
         {
+            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+
+            AddBeneficiaryCommand = commands[0];
+            EditBeneficiaryCommand = commands[1];
+            AddPowerOfAttorneyCommand = commands[2];
+            EditPowerOfAttorneyCommand = commands[3];
+            EditContactCommand = commands[4];
+            EditLimitCommand = commands[5];
+            EditPasswordCommand = commands[6];
+
             string acctNum = accountNumber;
+            
             FetchAccountDetails(acctNum);
         }
 

@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows;
 
-
 namespace MainClient._ViewModel
 {
     class AchLinkVM : ViewModelBase
@@ -72,30 +71,20 @@ namespace MainClient._ViewModel
             }
         }
 
-        private ObservableCollection<AchLinkModel> _achPaymentListResults =
-            new ObservableCollection<AchLinkModel>();
-        public ObservableCollection<AchLinkModel> AchPaymentListResults
-        {
-            get => _achPaymentListResults;
-            set
-            {
-                if (_achPaymentListResults != value)
-                {
-                    _achPaymentListResults = value;
-                    OnPropertyChanged(nameof(AchPaymentListResults));
-                }
-            }
-        }
-
         private void FetchAchDetails(string acctNum)
         {
-            var bankAchList = AchLinkModel.LookUpBankRouting();
-            if (bankAchList != null)
+            var bankRoutingInfoList = BankService.LookUpBankRouting();
+            if (bankRoutingInfoList != null)
             {
                 _achBankResults.Clear();
-                foreach (var bankACH in bankAchList)
+                foreach (var routingInfo in bankRoutingInfoList)
                 {
-                    _achBankResults.Add(bankACH);
+                    var achModel = new AchLinkModel
+                    {
+                        AchBankName = routingInfo.BankName,
+                        AchRoutingNumber = routingInfo.BankRoutingNumber
+                    };
+                    _achBankResults.Add(achModel);
                 }
             }
 
@@ -104,13 +93,17 @@ namespace MainClient._ViewModel
                 SelectedBank = _achBankResults.First();
             }
 
-            var bankAchTypeList = AchLinkModel.LookUpBankAcctType();
-            if (bankAchTypeList != null)
+            var bankAccountTypeList = BankService.LookUpBankAcctType();
+            if (bankAccountTypeList != null)
             {
                 _achBankTypeResults.Clear();
-                foreach (var bankACHType in bankAchTypeList)
+                foreach (var accountType in bankAccountTypeList)
                 {
-                    _achBankTypeResults.Add(bankACHType);
+                    var achTypeModel = new AchLinkModel
+                    {
+                        AchBankType = accountType.BankAccountType
+                    };
+                    _achBankTypeResults.Add(achTypeModel);
                 }
             }
 
@@ -139,21 +132,6 @@ namespace MainClient._ViewModel
                 }
             }
 
-            var AchPaymentList = AchLinkModel.GetAcctAchListByAcctNum(acctNum);
-            if (AchPaymentList != null)
-            {
-                _achPaymentListResults.Clear();
-                foreach (var ACHPayment in AchPaymentList)
-                {
-                    _achPaymentListResults.Add(ACHPayment);
-                }
-            }
-
-            if (_achPaymentListResults.Any())
-            {
-                SelectedAchPayment = _achPaymentListResults.First();
-            }
-
             OnPropertyChanged(String.Empty);
         }
 
@@ -168,24 +146,6 @@ namespace MainClient._ViewModel
                     _selectedBank = value;
                     OnPropertyChanged(nameof(SelectedBank));
                     UpdateACHRoutingNumber();
-                }
-            }
-        }
-
-        private AchLinkModel _selectedAchPayment;
-        public AchLinkModel SelectedAchPayment
-        {
-            get => _selectedAchPayment;
-            set
-            {
-                if (_selectedBank != value)
-                {
-                    _selectedAchPayment = value;
-                    ACHRoutingNumber = _selectedAchPayment?.PaymentRouting;
-                    ACHAccountNumber = _selectedAchPayment?.PaymentAcctNum;
-                    OnPropertyChanged(nameof(SelectedAchPayment));
-                    OnPropertyChanged(nameof(ACHRoutingNumber));
-                    OnPropertyChanged(nameof(ACHAccountNumber));
                 }
             }
         }
@@ -206,7 +166,7 @@ namespace MainClient._ViewModel
 
         private void UpdateACHRoutingNumber()
         {
-            ACHRoutingNumber = SelectedBank?.LUAchRoutingNumber;
+            ACHRoutingNumber = SelectedBank?.AchRoutingNumber;
         }
 
         private string _achRoutingNumber;
@@ -223,21 +183,33 @@ namespace MainClient._ViewModel
             }
         }
 
-        public string NewAchAccountNumber { get; set;}
-        public string NewAchNickname { get; set;}
+        public string NewAchAccountNumber { get; set; }
+        public string NewAchNickname { get; set; }
 
         private void ExecuteAddAchLink(object parameter)
         {
-            string accountNumber = AccountService.Instance.SelectedAccountNumber;
+            string accountNumber = AccountNumService.Instance.SelectedAccountNumber;
             string repId = RepIdService.Instance.RepId;
 
             try
             {
-                AchLinkModel.InsertAcctAchSetupByAcctNum(accountNumber, SelectedBank?.LUAchRoutingNumber, NewAchAccountNumber, SelectedBankType?.AchBankType, NewAchNickname, repId);
+                AchLinkModel.InsertAcctAchSetupByAcctNum(
+                    accountNumber,
+                    SelectedBank?.AchRoutingNumber,
+                    NewAchAccountNumber,
+                    SelectedBankType?.AchBankType,
+                    NewAchNickname,
+                    repId
+                );
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to add new ACH link: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Failed to add new ACH link: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
@@ -267,37 +239,13 @@ namespace MainClient._ViewModel
             }
         }
 
-        private void ExecuteAddAchPayment(object parameter)
-        {
-            string accountNumber = AccountService.Instance.SelectedAccountNumber;
-            string repId = RepIdService.Instance.RepId;
-            
-            if(string.IsNullOrEmpty(ACHAccountNumber))
-            {
-                MessageBox.Show("Account number must be provided.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            try
-            {
-                AchLinkModel.InsertAcctTransactionAchByAcctNum(accountNumber, ACHRoutingNumber, ACHAccountNumber, ACHPaymentAmount, repId);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to make ACH payment: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         public ICommand AddAchLinkCommand { get; }
-        public ICommand AddAchPaymentCommand { get; }
         
         public AchLinkVM(string accountNumber)
         {
             string acctNum = accountNumber;
             FetchAchDetails(acctNum);
             AddAchLinkCommand = new RelayCommand(ExecuteAddAchLink);
-            AddAchPaymentCommand = new RelayCommand(ExecuteAddAchPayment);
-
         }
     }
 }

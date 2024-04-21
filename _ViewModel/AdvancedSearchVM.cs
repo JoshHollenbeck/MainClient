@@ -1,18 +1,17 @@
-﻿using System.Windows;
+﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 using MainClient._Model;
 using MainClient.Services;
 using MainClient.Utilities;
-using System;
-using Microsoft.Data.SqlClient;
-
 
 namespace MainClient._ViewModel
 {
     class AdvancedSearchVM : ViewModelBase
     {
-        private readonly AdvancedSearchModel _searchService;
+        private readonly AdvancedSearchModel _advancedSearchService;
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public string MiddleInitial { get; set; }
@@ -23,34 +22,32 @@ namespace MainClient._ViewModel
         public string AcctNum { get; set; }
         public string CustEmail { get; set; }
 
-        private ObservableCollection<AdvancedSearchModel.SearchResult> _searchResults;
-        
-        public ObservableCollection<AdvancedSearchModel.SearchResult> SearchResults
+        private ObservableCollection<AdvancedSearchModel.AdvancedSearchResult> _advancedSearchResults;
+
+        public ObservableCollection<AdvancedSearchModel.AdvancedSearchResult> AdvancedSearchResults
         {
-            get { return _searchResults; }
+            get { return _advancedSearchResults; }
             set
             {
-                _searchResults = value;
-                OnPropertyChanged(nameof(SearchResults)); // Assuming OnPropertyChanged is implemented in ViewModelBase
+                _advancedSearchResults = value;
+                OnPropertyChanged(nameof(AdvancedSearchResults));
             }
         }
 
         public AdvancedSearchVM()
         {
-            _searchService = new AdvancedSearchModel();
-            SearchResults = new ObservableCollection<AdvancedSearchModel.SearchResult>();
-            PerformSearchCommand = new RelayCommand(ExecuteSearch);
-            OpenAccountOverviewCommand = new RelayCommand(OpenAccountOverview);            
+            _advancedSearchService = new AdvancedSearchModel();
+            AdvancedSearchResults =
+                new ObservableCollection<AdvancedSearchModel.AdvancedSearchResult>();
+            PerformAdvancedSearchCommand = new RelayCommand(ExecuteAdvancedSearch);
+            OpenAccountOverviewCommand = new RelayCommand(OpenAccountOverview);
         }
 
-        public ICommand PerformSearchCommand { get; private set; }
+        public ICommand PerformAdvancedSearchCommand { get; private set; }
 
-        public Action FocusOnDataGridAction { get; set; }
-        
-        // TODO Check if all search boxes work  qw
-        private void ExecuteSearch(object parameter)
+        private void ExecuteAdvancedSearch(object parameter)
         {
-            PerformSearch(
+            PerformAdvancedSearch(
                 lastName: this.LastName,
                 firstName: this.FirstName,
                 middleInitial: this.MiddleInitial,
@@ -64,7 +61,7 @@ namespace MainClient._ViewModel
         }
 
         // Method to perform the search and update SearchResults
-        public void PerformSearch(
+        public void PerformAdvancedSearch(
             string lastName,
             string firstName,
             string middleInitial,
@@ -76,7 +73,7 @@ namespace MainClient._ViewModel
             string custEmail
         )
         {
-            var results = _searchService.AcctAdvancedSearch(
+            var results = _advancedSearchService.AcctAdvancedSearch(
                 lastName,
                 firstName,
                 middleInitial,
@@ -87,21 +84,44 @@ namespace MainClient._ViewModel
                 acctNum,
                 custEmail
             );
-           Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                SearchResults.Clear();
+                AdvancedSearchResults.Clear();
                 foreach (var result in results)
                 {
-                    SearchResults.Add(result);
+                    AdvancedSearchResults.Add(result);
                 }
 
-                FocusOnDataGridAction?.Invoke();
+                ResetSearchFields();
             });
         }
 
-        private AdvancedSearchModel.SearchResult _selectedItem;
-        
-        public AdvancedSearchModel.SearchResult SelectedItem
+        private void ResetSearchFields()
+        {
+            LastName = null;
+            FirstName = null;
+            MiddleInitial = null;
+            CustomerID = null;
+            CustPhone = null;
+            CustZip = null;
+            CustTaxId = null;
+            AcctNum = null;
+            CustEmail = null;
+
+            OnPropertyChanged(nameof(LastName));
+            OnPropertyChanged(nameof(FirstName));
+            OnPropertyChanged(nameof(MiddleInitial));
+            OnPropertyChanged(nameof(CustomerID));
+            OnPropertyChanged(nameof(CustPhone));
+            OnPropertyChanged(nameof(CustZip));
+            OnPropertyChanged(nameof(CustTaxId));
+            OnPropertyChanged(nameof(AcctNum));
+            OnPropertyChanged(nameof(CustEmail));
+        }
+
+        private AdvancedSearchModel.AdvancedSearchResult _selectedItem;
+
+        public AdvancedSearchModel.AdvancedSearchResult SelectedItem
         {
             get => _selectedItem;
             set
@@ -120,12 +140,14 @@ namespace MainClient._ViewModel
             if (SelectedItem != null)
             {
                 // Set the global account number when an account is selected
-                AccountService.Instance.SelectedAccountNumber = SelectedItem.AccountNumber; 
-                string repId = RepIdService.Instance.RepId;               
+                AccountNumService.Instance.SelectedAccountNumber = SelectedItem.AccountNumber;
+                AccountNumService.Instance.SelectedAccountType = SelectedItem.AccountType;
+                ClientIdService.Instance.SelectedCustId = SelectedItem.CustomerID;
+                ClientIdService.Instance.SelectedJointCustId = SelectedItem.JointCustomerId;
+                string repId = RepIdService.Instance.RepId;
                 CloseAndLoadAccountAction?.Invoke(SelectedItem.AccountNumber);
 
-                AdvancedSearchModel.InsertAcctAccessHistoryByAcctNum(SelectedItem.AccountNumber, repId);
-                
+                // AdvancedSearchModel.InsertAcctAccessHistoryByAcctNum(SelectedItem.AccountNumber, repId);  
             }
             else
             {
@@ -134,4 +156,3 @@ namespace MainClient._ViewModel
         }
     }
 }
- 

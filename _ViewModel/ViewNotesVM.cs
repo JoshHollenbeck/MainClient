@@ -2,11 +2,15 @@ using System;
 using MainClient._Model;
 using MainClient.Utilities;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
+using MainClient.Services;
 
 namespace MainClient._ViewModel
 {
     class ViewNotesVM : ViewModelBase
     {
+        private readonly IDialogService _dialogService;
+
         private ObservableCollection<ViewNotesModel> _acctNoteResults = new ObservableCollection<ViewNotesModel>();
         public ObservableCollection<ViewNotesModel> AcctNoteResults
         {
@@ -21,12 +25,21 @@ namespace MainClient._ViewModel
             }
         }
 
-        public ViewNotesVM(string accountNumber)
+        public ICommand AddNotesCommand { get; }
+
+        public ViewNotesVM(string accountNumber,
+            IDialogService dialogService,
+            ICommand[] commands) : base()
         {
+            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+
+            AddNotesCommand = commands[0];
+            
             string acctNum = accountNumber;
             FetchNotesDetails(acctNum);
         }
 
+        
         private void FetchNotesDetails(string acctNum)
         {
             var acctNoteList = ViewNotesModel.GetAcctNotesByAcctNum(acctNum);
