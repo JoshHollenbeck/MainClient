@@ -6,14 +6,22 @@
         <Nullable>disable</Nullable>
         <UseWPF>true</UseWPF>
         <PlatformTarget>AnyCPU</PlatformTarget>
+        <ApplicationIcon>Images/MainClientIcon.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
-        <Content Include="Images\mainclient.png">
+        <Content Include="Images\MainClientBlue.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Images\JosHoBankLogoBlue.png">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
-        <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+        <PackageReference Include="Microsoft.Data.SqlClient"
+                          Version="5.1.1" />
+        <PackageReference Include="System.Data.SqlClient"
+                          Version="4.8.6" />
+        <PackageReference Include="System.Drawing.Common"
+                          Version="8.0.4" />
     </ItemGroup>
 </Project>
