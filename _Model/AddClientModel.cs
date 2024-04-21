@@ -1,79 +1,102 @@
+using System;
 using System.Data.SqlClient;
+using System.Data;
+using System.Windows;
+using MainClient.Services;
 using MainClient.Utilities;
-using System.Collections.Generic;
+
 
 namespace MainClient._Model
 {
-    // TODO set up these LU_tables
     public class AddClientModel
     {
-        public string IdName { get; set; }
-
-        public static IEnumerable<AddClientModel> LookUpIdType()
+        // Method to insert a new client.
+        public void AddClient(
+            string CustTaxId,
+            string FirstName,
+            string MiddleName,
+            string LastName,
+            string Suffix,
+            DateTime? DateOfBirth,
+            string CustEmail,
+            string CustPhoneHome,
+            string CustPhoneBusiness,
+            string CustAddress,
+            string CustAddress2,
+            string CustPostal,
+            string EmploymentStatus,
+            string EmployerName,
+            string Occupation,
+            string IdType,
+            string IdStateName,
+            string IdNum,
+            string IdExp,
+            string MothersMaiden,
+            string RepId
+        )
         {
-            var idTypeLists = new List<AddClientModel>();
-
+            // Connection string to the database.
             string connectionString = Connection.connectionString;
 
-            string storedProcedure = "[dbo].[MainClient_LookUpIdType]";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-
-            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
+            // Name of the stored procedure.
+            string storedProcedure = "[dbo].[Client_AddClient]";
+            
+            try
             {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                connection.Open();
-
-                using (SqlDataReader reader = command.ExecuteReader())
+                // Using statement to ensure proper disposal of resources.
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(storedProcedure, connection))
                 {
-                    while (reader.Read())
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Adding parameters to the command.
+                    command.Parameters.AddWithValue("@CustTaxId", CustTaxId);
+                    command.Parameters.AddWithValue("@FirstName", FirstName);
+                    command.Parameters.AddWithValue("@MiddleName", MiddleName);
+                    command.Parameters.AddWithValue("@LastName", LastName);
+                    command.Parameters.AddWithValue("@Suffix", Suffix);
+                    command.Parameters.AddWithValue("@DateOfBirth", DateOfBirth);
+                    command.Parameters.AddWithValue("@CustEmail", CustEmail);
+                    command.Parameters.AddWithValue("@CustPhoneHome", CustPhoneHome);
+                    command.Parameters.AddWithValue("@CustPhoneBusiness", CustPhoneBusiness);
+                    command.Parameters.AddWithValue("@CustAddress", CustAddress);
+                    command.Parameters.AddWithValue("@CustAddress2", CustAddress2);
+                    command.Parameters.AddWithValue("@CustPostal", CustPostal);
+                    command.Parameters.AddWithValue("@EmploymentStatus", EmploymentStatus);
+                    command.Parameters.AddWithValue("@EmployerName", EmployerName);
+                    command.Parameters.AddWithValue("@Occupation", Occupation);
+                    command.Parameters.AddWithValue("@IdType", IdType);
+                    command.Parameters.AddWithValue("@IdStateName", IdStateName);
+                    command.Parameters.AddWithValue("@IdNum", IdNum);
+                    command.Parameters.AddWithValue("@IdExp", IdExp);
+                    command.Parameters.AddWithValue("@MothersMaiden", MothersMaiden);
+                    command.Parameters.AddWithValue("@RepId", RepId);
+
+                    SqlParameter custId = new SqlParameter("@CustId", SqlDbType.BigInt)
                     {
-                        var idTypeList = new AddClientModel
-                        {
-                            IdName = reader[0] as string
-                        };
-                        idTypeLists.Add(idTypeList);
-                    }
+                        Direction = ParameterDirection.Output
+                    };
+                    command.Parameters.Add(custId);
+
+                    // Opening connection and executing the command.
+                    connection.Open();
+                    command.ExecuteNonQuery();
+
+                    long NewCustId = (long)custId.Value;
+
+                    ClientIdService.Instance.SelectedNewCustId = NewCustId;
                 }
             }
-            return idTypeLists;
-        }
-
-        public string StateAbbr { get; set; }
-        
-        public string StateName { get; set; }
-
-        public static IEnumerable<AddClientModel> LookUpState()
-        {
-            var stateTypeLists = new List<AddClientModel>();
-
-            string connectionString = Connection.connectionString;
-
-            string storedProcedure = "[dbo].[MainClient_LookUpState]";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-
-            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
+            catch (SqlException sqlEx)
             {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                connection.Open();
-
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var stateTypeList = new AddClientModel
-                        {
-                            StateAbbr = reader[0] as string,
-                            StateName = reader[1] as string
-                        };
-                        stateTypeLists.Add(stateTypeList);
-                    }
-                }
+                // Log the exception, show a message, or handle it as necessary
+                MessageBox.Show($"A SQL error occurred: {sqlEx.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            return stateTypeLists;
+            catch (Exception ex)
+            {
+                // This catches non-SQL exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

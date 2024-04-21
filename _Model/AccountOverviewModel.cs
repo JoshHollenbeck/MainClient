@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Data;
+using System.Windows;
 using MainClient.Utilities;
 
 namespace MainClient._Model
 {
+    // This class represents the model for displaying account overview details.
     public class AccountOverviewModel
     {
+        // Properties to store various account details.
         public string InitialContactMethod { get; set; }
         public string AccountType { get; set; }
         public string RegistrationName { get; set; }
@@ -47,89 +51,118 @@ namespace MainClient._Model
         public byte? AcctPurpose { get; set; }
         public byte? AcctActivity { get; set; }
 
+        // Method to retrieve account details by account number.
         public static AccountOverviewModel GetAccountDetailsByAcctNum(string acctNum)
         {
             AccountOverviewModel accountOverview = null;
 
+            // Retrieving connection string from utilities.
             string connectionString = Connection.connectionString;
 
+            // Stored procedure name.
             string storedProcedure = "[dbo].[Acct_GetAcctDetailsByAcctNum]";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-
-            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
+            try
             {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
-
-                connection.Open();
-
-                using (SqlDataReader reader = command.ExecuteReader())
+                // Using statement for ensuring proper disposal of resources.
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(storedProcedure, connection))
                 {
-                    while (reader.Read())
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Adding parameter for account number.
+                    command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
+
+                    connection.Open();
+
+                    // Executing the stored procedure and reading the results.
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        accountOverview = new AccountOverviewModel
+                        while (reader.Read())
                         {
-                            InitialContactMethod = reader["Initial Contact Method"] as string,
-                            AccountType = reader["Acct Type"] as string,
-                            RegistrationName = reader["Registration Name"] as string,
-                            ClientFirstName = reader["First Name"] as string,
-                            ClientMiddleName = reader.IsDBNull(reader.GetOrdinal("Middle Name"))
-                                ? null
-                                : reader["Middle Name"].ToString(),
-                            ClientLastName = reader["Last Name"] as string,
-                            ClientSuffix = reader.IsDBNull(reader.GetOrdinal("Suffix"))
-                                ? null
-                                : reader["Suffix"].ToString(),
-                            ClientAddress = reader["Cust Address"] as string,
-                            ClientAddress2 = reader.IsDBNull(
-                                reader.GetOrdinal("Cust Address 2")
-                            )
-                                ? null
-                                : reader["Cust Address 2"].ToString(),
-                            ClientCity = reader["Cust City"] as string,
-                            ClientState = reader["Cust State"] as string,
-                            ClientZip = reader["Cust Zip"] as string,
-                            PrimaryContactName = reader["Contact Name"] as string,
-                            PrimaryContactAddress = reader["Contact Address"] as string,
-                            PrimaryContactAddress2 = reader.IsDBNull(
-                                reader.GetOrdinal("Contact Address 2")
-                            )
-                                ? null
-                                : reader["Contact Address 2"].ToString(),
-                            PrimaryContactCity = reader["Contact City"] as string,
-                            PrimaryContactState = reader["Contact State"] as string,
-                            PrimaryContactZip = reader["Contact Zip"] as string,
-                            RepID = reader.IsDBNull(reader.GetOrdinal("Rep ID"))
-                                ? null
-                                : reader["Rep ID"].ToString(),
-                            EstablishedDate = reader["Client Since"] as DateTime?,
-                            AccountStatus = reader["Acct Status"] as bool?,
-                            JurisdictionCountry = reader["Jurisdiction Country"] as string,
-                            JurisdictionState = reader["Jurisdiction State"] as string,
-                            AccountPassword = reader["Acct Pass"] as string,
-                            BranchLocation = reader["Branch Location"] as string,
-                            CustTaxId = reader["Cust Tax ID"] as string,
-                            AtmLimit = reader["ATM Limit"] as int?,
-                            AchLimit = reader["ACH Limit"] as int?,
-                            WireLimit = reader["Wire Limit"] as int?,
-                            EmailAddress = reader["Cust Email"] as string,
-                            WebBanking = reader["Web"] as bool?,
-                            MobileBanking = reader["Mobile"] as bool?,
-                            TwoFactor = reader["Two Factor"] as bool?,
-                            Biometrics = reader["Biometrics"] as bool?,
-                            AcctObjective = reader["Acct Objective"] is DBNull ? (byte?)null : Convert.ToByte(reader["Acct Objective"]),
-                            AcctFunding = reader["Acct Funding"] is DBNull ? (byte?)null : Convert.ToByte(reader["Acct Funding"]),
-                            AcctPurpose = reader["Acct Purpose"] is DBNull ? (byte?)null : Convert.ToByte(reader["Acct Purpose"]),
-                            AcctActivity = reader["Acct Activity"] is DBNull ? (byte?)null : Convert.ToByte(reader["Acct Activity"])
-                        };
+                            accountOverview = new AccountOverviewModel
+                            {
+                                InitialContactMethod = reader["Initial Contact Method"] as string,
+                                AccountType = reader["Acct Type"] as string,
+                                RegistrationName = reader["Registration Name"] as string,
+                                ClientFirstName = reader["First Name"] as string,
+                                ClientMiddleName = reader.IsDBNull(reader.GetOrdinal("Middle Name"))
+                                    ? null
+                                    : reader["Middle Name"].ToString(),
+                                ClientLastName = reader["Last Name"] as string,
+                                ClientSuffix = reader.IsDBNull(reader.GetOrdinal("Suffix"))
+                                    ? null
+                                    : reader["Suffix"].ToString(),
+                                ClientAddress = reader["Cust Address"] as string,
+                                ClientAddress2 = reader.IsDBNull(reader.GetOrdinal("Cust Address 2"))
+                                    ? null
+                                    : reader["Cust Address 2"].ToString(),
+                                ClientCity = reader["Cust City"] as string,
+                                ClientState = reader["Cust State"] as string,
+                                ClientZip = reader["Cust Zip"] as string,
+                                PrimaryContactName = reader["Contact Name"] as string,
+                                PrimaryContactAddress = reader["Contact Address"] as string,
+                                PrimaryContactAddress2 = reader.IsDBNull(
+                                    reader.GetOrdinal("Contact Address 2")
+                                )
+                                    ? null
+                                    : reader["Contact Address 2"].ToString(),
+                                PrimaryContactCity = reader["Contact City"] as string,
+                                PrimaryContactState = reader["Contact State"] as string,
+                                PrimaryContactZip = reader["Contact Zip"] as string,
+                                RepID = reader.IsDBNull(reader.GetOrdinal("Rep ID"))
+                                    ? null
+                                    : reader["Rep ID"].ToString(),
+                                EstablishedDate = reader["Opened Date"] as DateTime?,
+                                AccountStatus = reader["Acct Status"] as bool?,
+                                JurisdictionCountry = reader["Jurisdiction Country"] as string,
+                                JurisdictionState = reader["Jurisdiction State"] as string,
+                                AccountPassword = reader["Acct Pass"] as string,
+                                BranchLocation = reader["Branch Location"] as string,
+                                CustTaxId = reader["Cust Tax ID"] as string,
+                                AtmLimit = reader["ATM Limit"] as int?,
+                                AchLimit = reader["ACH Limit"] as int?,
+                                WireLimit = reader["Wire Limit"] as int?,
+                                EmailAddress = reader["Cust Email"] as string,
+                                WebBanking = reader["Web"] as bool?,
+                                MobileBanking = reader["Mobile"] as bool?,
+                                TwoFactor = reader["Two Factor"] as bool?,
+                                Biometrics = reader["Biometrics"] as bool?,
+                                AcctObjective =
+                                    reader["Acct Objective"] is DBNull
+                                        ? (byte?)null
+                                        : Convert.ToByte(reader["Acct Objective"]),
+                                AcctFunding =
+                                    reader["Acct Funding"] is DBNull
+                                        ? (byte?)null
+                                        : Convert.ToByte(reader["Acct Funding"]),
+                                AcctPurpose =
+                                    reader["Acct Purpose"] is DBNull
+                                        ? (byte?)null
+                                        : Convert.ToByte(reader["Acct Purpose"]),
+                                AcctActivity =
+                                    reader["Acct Activity"] is DBNull
+                                        ? (byte?)null
+                                        : Convert.ToByte(reader["Acct Activity"])
+                            };
+                        }
                     }
                 }
+            }
+            catch (SqlException sqlEx)
+            {
+                // Log the exception, show a message, or handle it as necessary
+                MessageBox.Show($"A SQL error occurred: {sqlEx.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                // This catches non-SQL exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return accountOverview;
         }
 
+        // Properties representing account holder attributes
         public string AccountHolderCustomerID { get; set; }
         public string AccountHolderFirstLastName { get; set; }
         public string AccountHolderTaxID { get; set; }
@@ -138,125 +171,184 @@ namespace MainClient._Model
         public string AccountHolderState { get; set; }
         public string AccountHolderZip { get; set; }
 
+        // Method to retrieve account holders by account number.
         public static IEnumerable<AccountOverviewModel> GetAccountHoldersByAcctNum(string acctNum)
         {
+            // List to store account holder objects.
             var accountHolders = new List<AccountOverviewModel>();
 
+            // Retrieving connection string from utilities.
             string connectionString = Connection.connectionString;
 
+            // Stored procedure name.
             string storedProcedure = "[dbo].[Acct_GetAcctHolderByAcctNum]";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-
-            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
+            try
             {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
-
-                connection.Open();
-
-                using (SqlDataReader reader = command.ExecuteReader())
+                // Using statement for ensuring proper disposal of resources.
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(storedProcedure, connection))
                 {
-                    while (reader.Read())
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Adding parameter for account number.
+                    command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
+
+                    connection.Open();
+
+                    // Executing the stored procedure and reading the results.
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        var accountHolder = new AccountOverviewModel
+                        while (reader.Read())
                         {
-                            AccountHolderFirstLastName = reader["First & Last Name"] as string,
-                            AccountHolderCustomerID = reader["Cust ID"] as string,
-                            AccountHolderTaxID = reader["Tax ID"] as string,
-                            AccountHolderAddress = reader["Address"] as string,
-                            AccountHolderCity = reader["City"] as string,
-                            AccountHolderState = reader["State"] as string,
-                            AccountHolderZip = reader["Zip"] as string
-                        };
-                        accountHolders.Add(accountHolder);
+                            var accountHolder = new AccountOverviewModel
+                            {
+                                AccountHolderFirstLastName = reader["First & Last Name"] as string,
+                                AccountHolderCustomerID = reader["Cust ID"] as string,
+                                AccountHolderTaxID = reader["Tax ID"] as string,
+                                AccountHolderAddress = reader["Address"] as string,
+                                AccountHolderCity = reader["City"] as string,
+                                AccountHolderState = reader["State"] as string,
+                                AccountHolderZip = reader["Zip"] as string
+                            };
+                            accountHolders.Add(accountHolder);
+                        }
                     }
                 }
             }
+            catch (SqlException sqlEx)
+            {
+                // Log the exception, show a message, or handle it as necessary
+                MessageBox.Show($"A SQL error occurred: {sqlEx.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                // This catches non-SQL exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             return accountHolders;
         }
-    
+
+        // Properties representing account beneficiary attributes
         public string BeneFirstLastName { get; set; }
         public string BeneCustomerID { get; set; }
         public string BeneTaxID { get; set; }
         public string BeneRelationship { get; set; }
         public decimal? BenePortion { get; set; }
 
+        // Method to retrieve account beneficiaries by account number.
         public static IEnumerable<AccountOverviewModel> GetAccountBeneByAcctNum(string acctNum)
         {
+            // List to store account beneficiary objects.
             var accountBenes = new List<AccountOverviewModel>();
 
+            // Retrieving connection string from utilities.
             string connectionString = Connection.connectionString;
 
+            // Stored procedure name.
             string storedProcedure = "[dbo].[Acct_GetAcctBeneByAcctNum]";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-
-            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
+            try
             {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
-
-                connection.Open();
-
-                using (SqlDataReader reader = command.ExecuteReader())
+                // Using statement for ensuring proper disposal of resources.
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(storedProcedure, connection))
                 {
-                    while (reader.Read())
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Adding parameter for account number.
+                    command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
+
+                    connection.Open();
+
+                    // Executing the stored procedure and reading the results.
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        var accountBene = new AccountOverviewModel
+                        while (reader.Read())
                         {
-                            BeneFirstLastName = reader["First & Last Name"] as string,
-                            BeneCustomerID = reader["Cust ID"] as string,
-                            BeneTaxID = reader["Tax ID"] as string,
-                            BeneRelationship = reader["Relationship"] as string,
-                            BenePortion = reader["% Portion"] as decimal?
-                        };
-                        accountBenes.Add(accountBene);
+                            var accountBene = new AccountOverviewModel
+                            {
+                                BeneFirstLastName = reader["First & Last Name"] as string,
+                                BeneCustomerID = reader["Cust ID"] as string,
+                                BeneTaxID = reader["Tax ID"] as string,
+                                BeneRelationship = reader["Relationship"] as string,
+                                BenePortion = reader["% Portion"] as decimal?
+                            };
+                            accountBenes.Add(accountBene);
+                        }
                     }
                 }
+            }
+            catch (SqlException sqlEx)
+            {
+                // Log the exception, show a message, or handle it as necessary
+                MessageBox.Show($"A SQL error occurred: {sqlEx.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                // This catches non-SQL exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return accountBenes;
         }
 
+        // Properties representing account power of attorney attributes
         public string POAFirstLastName { get; set; }
         public string POACustomerID { get; set; }
         public string POATaxID { get; set; }
         public string POARole { get; set; }
 
+        // Method to retrieve account power of attorney by account number.
         public static IEnumerable<AccountOverviewModel> GetAccountPOAByAcctNum(string acctNum)
         {
+            // List to store account power of attorney objects.
             var accountPOAs = new List<AccountOverviewModel>();
 
+            // Retrieving connection string from utilities.
             string connectionString = Connection.connectionString;
 
+            // Stored procedure name.
             string storedProcedure = "[dbo].[Acct_GetAcctPOAByAcctNum]";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-
-            using (SqlCommand command = new SqlCommand(storedProcedure, connection))
+            try
             {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
-
-                connection.Open();
-
-                using (SqlDataReader reader = command.ExecuteReader())
+                // Using statement for ensuring proper disposal of resources.
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(storedProcedure, connection))
                 {
-                    while (reader.Read())
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Adding parameter for account number.
+                    command.Parameters.Add(new SqlParameter("@AcctNum", acctNum));
+
+                    connection.Open();
+
+                    // Executing the stored procedure and reading the results.
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        var accountPOA = new AccountOverviewModel
+                        while (reader.Read())
                         {
-                            POAFirstLastName = reader["First & Last Name"] as string,
-                            POACustomerID = reader["Customer ID"] as string,
-                            POATaxID = reader["Tax ID"] as string,
-                            POARole = reader["Role"] as string
-                        };
-                        accountPOAs.Add(accountPOA);
+                            var accountPOA = new AccountOverviewModel
+                            {
+                                POAFirstLastName = reader["First & Last Name"] as string,
+                                POACustomerID = reader["Customer ID"] as string,
+                                POATaxID = reader["Tax ID"] as string,
+                                POARole = reader["Role"] as string
+                            };
+                            accountPOAs.Add(accountPOA);
+                        }
                     }
                 }
+            }
+            catch (SqlException sqlEx)
+            {
+                // Log the exception, show a message, or handle it as necessary
+                MessageBox.Show($"A SQL error occurred: {sqlEx.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                // This catches non-SQL exceptions
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             return accountPOAs;
         }

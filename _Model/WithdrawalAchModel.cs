@@ -7,25 +7,27 @@ using MainClient.Utilities;
 
 namespace MainClient._Model
 {
-    // Model class for representing access history.
-    public class AccessHistoryModel
+    // This class represents the model for handling ACH payments.
+    public class WithdrawalAchModel
     {
-        // Properties representing access history attributes.
-        public string HistoryAccountNumber { get; set; }
-        public string HistoryRepID { get; set; }
-        public DateTime? HistoryDate { get; set; }
+        // Properties to store ACH list details.
+        public string PaymentNickname { get; set; }
+        public string PaymentBankName { get; set; }
+        public string PaymentRouting { get; set; }
+        public string PaymentAcctNum { get; set; }
+        public string DisplayName => $"{PaymentNickname} - {PaymentAcctNum}";
 
-        // Method to retrieve client access history by account number.
-        public static IEnumerable<AccessHistoryModel> GetClientAccessHistoryByAcctNum(string acctNum)
+        // Method to retrieve ACH list associated with an account.
+        public static IEnumerable<WithdrawalAchModel> GetAcctAchListByAcctNum(string acctNum)
         {
-            // List to store access history objects.
-            var accessHistorys = new List<AccessHistoryModel>();
+            // List to store ACH list objects.
+            var achPaymentLists = new List<WithdrawalAchModel>();
 
             // Retrieving connection string from utilities.
             string connectionString = Connection.connectionString;
 
             // Stored procedure name.
-            string storedProcedure = "[dbo].[Client_GetClientAccessHistoryByAcctNum]";
+            string storedProcedure = "[dbo].[Acct_GetAcctAchListByAcctNum]";
 
             try
             {
@@ -45,13 +47,14 @@ namespace MainClient._Model
                     {
                         while (reader.Read())
                         {
-                            var accessHistory = new AccessHistoryModel
+                            var achPaymentList = new WithdrawalAchModel
                             {
-                                HistoryAccountNumber = reader["Acct Number"] as string,
-                                HistoryRepID = reader["Rep ID"] as string,
-                                HistoryDate = reader["Date"] as DateTime?,
+                                PaymentNickname = reader["Nickname"] as string,
+                                PaymentBankName = reader["Bank Name"] as string,
+                                PaymentRouting = reader["Bank Routing"] as string,
+                                PaymentAcctNum = reader["Bank Acct Num"] as string,
                             };
-                            accessHistorys.Add(accessHistory);
+                            achPaymentLists.Add(achPaymentList);
                         }
                     }
                 }
@@ -66,8 +69,7 @@ namespace MainClient._Model
                 // This catches non-SQL exceptions
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            return accessHistorys;
+            return achPaymentLists;
         }
     }
 }
