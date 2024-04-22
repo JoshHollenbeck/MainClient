@@ -218,7 +218,7 @@
                             HorizontalAlignment="Right"
                             Style="{StaticResource Button}"
                             Content="Add ACH Link"
-                            Command="{Binding AddAchLinkCommand}"
+                            Command="{Binding CompositeAddAchLinkCommand}"
                             Margin="5" />
                 </Grid>
             </Grid>
