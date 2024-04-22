@@ -97,6 +97,10 @@ namespace MainClient._ViewModel
                     addAccountWindow.Close();
                     Application.Current.Dispatcher.Invoke(() =>
                     {
+                        SetClientNameByAccountNumber(accountNumber);
+
+                        SetClientAcctByAccountNumber(accountNumber);
+
                         LoadViewModel<AccountOverviewVM>(
                             accountNumber,
                             (acctNum, dialogService, cmds) =>
@@ -133,6 +137,10 @@ namespace MainClient._ViewModel
                     addAccountNewClientWindow.Close();
                     Application.Current.Dispatcher.Invoke(() =>
                     {
+                        SetClientNameByAccountNumber(accountNumber);
+
+                        SetClientAcctByAccountNumber(accountNumber);
+                        
                         LoadViewModel<AccountOverviewVM>(
                             accountNumber,
                             (acctNum, dialogService, cmds) =>
@@ -1582,7 +1590,12 @@ namespace MainClient._ViewModel
                     return; // Exit the method if no permissions are granted
                 }
 
-                LoadViewModel(accountNumber, acctNum => new AchLinkVM(acctNum));
+                LoadViewModel<AchLinkVM>(
+                    accountNumber,
+                    (acctNum, dialogService, cmds) =>
+                        new AchLinkVM(acctNum, dialogService, cmds),
+                    "Ach"
+                );
             }
         }
 
@@ -1882,6 +1895,13 @@ namespace MainClient._ViewModel
                 commands = new ICommand[]
                 {
                     new RelayCommand(AddNotes)
+                };
+            }
+            else if (viewModelType == "Ach")
+            {
+                commands = new ICommand[]
+                {
+                    new RelayCommand(AchLink)
                 };
             }
             else

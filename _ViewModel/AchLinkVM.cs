@@ -11,6 +11,8 @@ namespace MainClient._ViewModel
 {
     class AchLinkVM : ViewModelBase
     {
+        private readonly IDialogService _dialogService;
+
         private ObservableCollection<AchLinkModel> _achBankResults =
             new ObservableCollection<AchLinkModel>();
         public ObservableCollection<AchLinkModel> AchBankResults
@@ -240,9 +242,42 @@ namespace MainClient._ViewModel
         }
 
         public ICommand AddAchLinkCommand { get; }
-        
-        public AchLinkVM(string accountNumber)
+        public ICommand AchLinkCommand { get; }
+
+        private ICommand _compositeAddAchLinkCommand;
+        public ICommand CompositeAddAchLinkCommand
         {
+            get
+            {
+                if (_compositeAddAchLinkCommand == null)
+                {
+                    _compositeAddAchLinkCommand = new RelayCommand(ExecuteCompositeCommand);
+                }
+                return _compositeAddAchLinkCommand;
+            }
+        }
+
+        private void ExecuteCompositeCommand(object parameter)
+        {
+            if (AddAchLinkCommand.CanExecute(null))
+            {
+                AddAchLinkCommand.Execute(null);
+            }
+            if (AchLinkCommand.CanExecute(null))
+            {
+                AchLinkCommand.Execute(null);
+            }
+        }
+
+
+        public AchLinkVM(string accountNumber, IDialogService dialogService, ICommand[] commands)
+            : base()
+        {
+            _dialogService =
+                dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+
+            AchLinkCommand = commands[0];
+
             string acctNum = accountNumber;
             FetchAchDetails(acctNum);
             AddAchLinkCommand = new RelayCommand(ExecuteAddAchLink);
