@@ -6,17 +6,17 @@ Take the sql table from the Database folder and run them in order. Start with 01
 
 To login into the database, you can choose one of these four:
 Trading access
-username: XCF96
-password: _9Faf2wu
+<br>username: XCF96
+<br>password: _9Faf2wu
 
 Move Money access
-username: ZZWCP
-password: V2Vk)2Dd
+<br>username: ZZWCP
+<br>password: V2Vk)2Dd
 
 View Only access
-username: STU56
-password: )&05Irkd
+<br>username: STU56
+<br>password: )&05Irkd
 
 All access
-username: 0MTJN
-password: $1sbcWwp
+<br>username: 0MTJN
+<br>password: $1sbcWwp
